@@ -1,0 +1,26 @@
+.gantChart {
+    width: 90%;
+    height:  90vh;
+    border: double grey;
+	overflow-x:scroll;
+}
+.gantChartArea{
+    background:lightgrey;	
+	height:100%;
+	position:relative;
+}
+
+.gantChartBar{
+    background:lightgreen;
+	position:absolute;
+}
+
+table{
+	border-collapse: collapse;
+	white-space: nowrap;
+}
+
+.unit td{
+	border-width: 0px 1px 0px 1px;
+}
+
