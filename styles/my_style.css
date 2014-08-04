@@ -20,6 +20,12 @@ table{
 	white-space: nowrap;
 }
 
+table td{
+	border: solid 1px black;
+	margin: 0px;
+	padding: 0px;
+}
+
 .unit td{
 	border-width: 0px 1px 0px 1px;
 }

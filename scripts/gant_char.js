@@ -43,6 +43,47 @@
 	    }
 	}
 
+
+	//праздники
+	function Holidays () {
+		_holidays = [];
+
+		function initHolidays (date) {
+
+			var year = date.getFullYear();
+
+			// 1, 2, 3, 4, 5, 6 и 8 января – Новогодние каникулы;
+			// 7 января – Рождество Христово;
+			for (var i = 1; i < 8; i++){
+				_holidays.push(new Date(year, 0, i));
+			}
+
+			// 23 февраля – День защитника Отечества;
+			_holidays.push(new Date(year, 1, 23));
+
+			// 8 марта – Международный женский день;
+			_holidays.push(new Date(year, 2, 8));
+
+			// 1 мая – Праздник Весны и Труда;
+			_holidays.push(new Date(year, 4, 1));
+
+			// 9 мая – День Победы; 
+			_holidays.push(new Date(year, 4, 9));
+
+			// 12 июня – День России; 
+			_holidays.push(new Date(year, 5, 12));
+
+			// 4 ноября – День народного единства
+			_holidays.push(new Date(year, 10, 4));
+		}
+
+		this.isDateHoliday = function (date) {
+			initHolidays(date);
+		}
+		
+	}
+
+
 	var scale = 0;
 	var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
 		"Friday", "Saturday"];
@@ -478,13 +519,9 @@
 		$(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
 		$(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);
 		$(".mainUnit td:not(.first)").css("text-align","center");		
-		// $("table").css("border-collapse", "collapse");
-		// $("table").css("white-space","nowrap");
 		$("table.mainUnit td").css("border","solid 1px black");
-		$("table td").css("border-top","solid 0px black");
-		$("table td").css("margin","0px");
-		$("table td").css("padding","0px");
-		
+
+		$("table td").css("border-top","solid 0px black");		
 		
 		//рисуем задачи, хотя это нужно делать не здесь
 		var begD = new Date();
