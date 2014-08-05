@@ -1,7 +1,14 @@
 ﻿$(document).ready(function(){
 	
-	// $("head").append(
-	// 			"<link href='styles/my_styles.css' type='text/css' rel='stylesheet' />");
+	// $(window).bind('mousewheel DOMMouseScroll', function(event){
+	// 	var e = event;
+	//     if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+	//         // scroll up
+	//     }
+	//     else {
+	//         // scroll down
+	//     }
+	// });
 
 	var obj = document.body;  // obj=element for example body
 	// bind mousewheel event on the mouseWheel function
@@ -19,7 +26,7 @@
 	    if(e.ctrlKey)
 	    {
 	        if(e.preventDefault) e.preventDefault();
-	        else e.returnValue=false;
+	        else e.returnValue = false;
 
 	        console.log("Work hah " + new Date());
 	        if (e.deltaY > 0){
@@ -43,46 +50,108 @@
 	    }
 	}
 
-
 	//праздники
 	function Holidays () {
-		_holidays = [];
+		var _holidays = [];
+
+		// Маловероятное значение для года вначале,
+		// чтобы в первый раз initHolidays инициализировал 
+		var year = 0;
 
 		function initHolidays (date) {
 
+			var oldYear = year;
 			var year = date.getFullYear();
 
-			// 1, 2, 3, 4, 5, 6 и 8 января – Новогодние каникулы;
-			// 7 января – Рождество Христово;
-			for (var i = 1; i < 8; i++){
-				_holidays.push(new Date(year, 0, i));
+			//Что бы не пересчитывать, если год не изменился.
+			if (oldYear != year){
+
+				// 1, 2, 3, 4, 5, 6 и 8 января – Новогодние каникулы;
+				// 7 января – Рождество Христово;
+				for (var i = 1; i < 8; i++){
+					_holidays.push(new Date(year, 0, i));
+				}
+
+				// 23 февраля – День защитника Отечества;
+				_holidays.push(new Date(year, 1, 23));
+
+				// 8 марта – Международный женский день;
+				_holidays.push(new Date(year, 2, 8));
+
+				// 1 мая – Праздник Весны и Труда;
+				_holidays.push(new Date(year, 4, 1));
+
+				// 9 мая – День Победы; 
+				_holidays.push(new Date(year, 4, 9));
+
+				// 12 июня – День России; 
+				_holidays.push(new Date(year, 5, 12));
+
+				// 4 ноября – День народного единства
+				_holidays.push(new Date(year, 10, 4));
 			}
-
-			// 23 февраля – День защитника Отечества;
-			_holidays.push(new Date(year, 1, 23));
-
-			// 8 марта – Международный женский день;
-			_holidays.push(new Date(year, 2, 8));
-
-			// 1 мая – Праздник Весны и Труда;
-			_holidays.push(new Date(year, 4, 1));
-
-			// 9 мая – День Победы; 
-			_holidays.push(new Date(year, 4, 9));
-
-			// 12 июня – День России; 
-			_holidays.push(new Date(year, 5, 12));
-
-			// 4 ноября – День народного единства
-			_holidays.push(new Date(year, 10, 4));
 		}
 
-		this.isDateHoliday = function (date) {
+		/*
+		 * Сравнение дат на равенство до дня - 
+		 * по году, месяцу и дню.
+		 */
+		function equalsDateByDay (date1, date2) {
+			var date1BeforeDay = new Date(date1.getFullYear(), date1.getMonth(),
+				date1.getDate());
+			var date2BeforeDay = new Date(date2.getFullYear(), date2.getMonth(),
+				date2.getDate());
+
+			return date1BeforeDay - date2BeforeDay === 0;	
+		}
+
+		this.getDayInfo = function (date, needInfoByNextDay = true) {
 			initHolidays(date);
+
+			var result = _holidays.find(function(element, index, arr){
+				return equalsDateByDay(element, date);
+			});
+
+			var dayDate = new Date(date.getFullYear(), date.getMonth(),
+				date.getDate);
+			var dayInMillisec = dayDate.getTime();
+			var hourMs = 3600 * 1000;
+
+			var dayInfo = {
+				type: "work_day",
+			 	schedule: [{
+			 					start: new Date(dayInMillisec + 9 * hourMs),
+			 					end: new Date(dayInMillisec + 13 * hourMs)
+			 				}, 
+
+			 				{
+			 					start: new Date(dayInMillisec + 14 * hourMs),
+			 					end: new Date(dayInMillisec + 18 * hourMs)
+			 				}
+			 	]
+			};
+			if (result !== undefined){
+				dayInfo.type = "holiday_day";
+			}
+
+			// условие для рекурсии
+			if (needInfoByNextDay){
+				var nextDay = new Date();
+				nextDay.setTime(date.getTime() + 24 * 3600 * 1000);
+
+				var nextDayInfo = this.getDayInfo(nextDay, false);
+				if (nextDay.type === "holiday_day"){
+					dayInfo.type = "before_holiday";
+					dayInfo.schedule[0] = {start: }
+				}
+			}
+
+			return dayInfo;
 		}
 		
 	}
 
+	holiday = new Holidays();
 
 	var scale = 0;
 	var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
