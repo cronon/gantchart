@@ -204,6 +204,28 @@
 		}
 	];
 
+
+	function defineBordersByActivities(activities){
+		var result = [];
+		if (activities.length > 0){
+			var min = activities[0].startDate;
+			var max = activities[0].endDate;
+
+			for (var i = 1; i < activities.length; i++) {
+				if (min > activities[i].startDate){
+					min = activities[i].startDate;
+				}
+
+				if (max < activities[i].endDate){
+					max = activities[i].endDate;
+				}
+			}
+			result = [min, max];
+		}
+
+		return result;
+	}
+
 	
 	Date.prototype.getDaysInYear = function(){
 	    var y = this.getFullYear();
@@ -627,7 +649,6 @@
 			$(".gantChartArea").append(setka);
 		});
 	}
-	
-	
+
 	showScale(scale,chartStartDateF,chartEndDateF);		
 });
