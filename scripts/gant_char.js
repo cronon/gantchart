@@ -178,9 +178,6 @@
 	var months = ["January", "February", "March", "April", "May", "June","July",
 		"August","September","October","November","December"];
 
-	var chartStartDateF = new Date("Jan 1, 2013 03:50:00");
-	var chartEndDateF = new Date("Jul 1, 2013");
-
 	//список задач
 	var activities = [
 		{
@@ -204,20 +201,27 @@
 		}
 	];
 
+	var timeBorderChart = defineBordersByActivities(activities);
+	var chartStartDateF = timeBorderChart[0];//new Date("Jan 1, 2013 03:50:00");
+	var chartEndDateF = timeBorderChart[1];//new Date("Jul 1, 2013");
 
 	function defineBordersByActivities(activities){
 		var result = [];
 		if (activities.length > 0){
-			var min = activities[0].startDate;
-			var max = activities[0].endDate;
+			var min = new Date(activities[0].startDate);
+			var max = new Date(activities[0].endDate);
 
+			var currentStart;
+			var currentEnd;
 			for (var i = 1; i < activities.length; i++) {
-				if (min > activities[i].startDate){
-					min = activities[i].startDate;
+				currentStart = new Date(activities[i].startDate);
+				if (min - currentStart > 0 ){
+					min = currentStart;
 				}
 
-				if (max < activities[i].endDate){
-					max = activities[i].endDate;
+				currentEnd = new Date(activities[i].endDate);
+				if (max - currentEnd < 0){
+					max = currentEnd;
 				}
 			}
 			result = [min, max];
