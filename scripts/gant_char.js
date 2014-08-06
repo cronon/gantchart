@@ -637,6 +637,16 @@
 
 		$("table td").css("border-top","solid 0px black");		
 		
+		//рисуем столбцы обозначающие рабочее время
+		var columns = "<table class='columns'><tr>";
+		tDate.setTime(cSDMU.getTime());
+		while (tDate <= cEDMU) {			
+			setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
+			tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+				scales[scale].mainUnitMilliSec);
+		}
+		columns += "</tr></table>";
+		
 		//рисуем задачи, хотя это нужно делать не здесь
 		var begD = new Date();
 		var left,top,width;
