@@ -105,15 +105,27 @@
 			return date1BeforeDay - date2BeforeDay === 0;	
 		}
 
-		this.getDayInfo = function (date, needInfoByNextDay = true) {
+		this.getDayInfo = function (date, needInfoByNextDay) {
+
+			needInfoByNextDay = typeof needInfoByNextDay !== 'undefined' 
+				? needInfoByNextDay : true;
+
+			var dayIndex = date.getDay();
+			// проверка на субботу и воскресенье
+			if (dayIndex === 0 || dayIndex === 6){
+				return {
+					type: "holiday_day", schedule: []
+				};
+			}
+
 			initHolidays(date);
 
-			var result = _holidays.find(function(element, index, arr){
+			var findedHoliday = _holidays.filter(function(element, index, arr){
 				return equalsDateByDay(element, date);
 			});
 
 			var dayDate = new Date(date.getFullYear(), date.getMonth(),
-				date.getDate);
+				date.getDate());
 			var dayInMillisec = dayDate.getTime();
 			var hourMs = 3600 * 1000;
 
@@ -130,8 +142,13 @@
 			 				}
 			 	]
 			};
-			if (result !== undefined){
+
+			if (findedHoliday.length > 0){
 				dayInfo.type = "holiday_day";
+			} else if (dayIndex === 5){ //если день не праздник, то проверка на пятницу
+				dayInfo.type = "before_holiday";
+				//более ранний конец рабочего дня
+				dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * hourMs);
 			}
 
 			// условие для рекурсии
@@ -139,10 +156,12 @@
 				var nextDay = new Date();
 				nextDay.setTime(date.getTime() + 24 * 3600 * 1000);
 
+				// предотвращаем вечную рекурсиию
 				var nextDayInfo = this.getDayInfo(nextDay, false);
 				if (nextDay.type === "holiday_day"){
 					dayInfo.type = "before_holiday";
-					dayInfo.schedule[0] = {start: }
+					//более ранний конец рабочего дня
+					dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * hourMs);
 				}
 			}
 
