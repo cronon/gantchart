@@ -34,3 +34,7 @@ table.columns td {
 	border: 1px solid white;
 }
 
+table.columns{
+	background-color: white;
+}
+

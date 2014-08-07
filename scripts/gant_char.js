@@ -22,17 +22,17 @@
 		        else e.returnValue = false;
 
 		        console.log("Work hah " + new Date());
-		        if (e.deltaY > 0){
-		        	if (scale > 0){
-		        		scale--;
-		        	} else if (scale == 0){
-		        		scale = 9;
+		        if (e.deltaY > 0 || e.clientY > 0){
+		        	if (scale < 9){
+		        		scale++;
+		        	} else {
+		        		scale = 0;
 		        	}
 		        } else {
-		        	if (scale < 9) {
-						scale++;
+		        	if (scale > 0) {
+						scale--;
 					} else {
-						scale = 0;
+						scale = 9;
 					}
 		        }
 		        
@@ -633,28 +633,66 @@
 
 		$("table td").css("border-top","solid 0px black");		
 		
+
 		//рисуем столбцы обозначающие рабочее время
 		var columns = "<table class='columns'><tr>";
 		tDate.setTime(cSDMU.getTime());
 
 		var timeWidthColumns = scales[scale].unitMilliSec;
 		var widthColumnsContent = scales[scale].unitLength(tDate);
-		while (tDate <= cEDMU) {			
-			columns += "<td> </td>";
-			// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-			// 	scales[scale].mainUnitMilliSec);
-			tDate.setTime(tDate.getTime() + timeWidthColumns);
+
+		switch(scale){
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				var holiday = new Holidays();
+				var dayWithContent = scales[scale].mainUnitLength;
+				var dayTimeWidth = scales[scale].mainUnitMilliSec;
+				while (tDate <= cEDMU) {	
+					//столбец по unit
+					columns += "<td>";
+					var startWeek = tDate;
+					//начало следущей недели в tDate
+					tDate.setTime(tDate.getTime() + timeWidthColumns);
+
+					var indexDay = 0;
+					while (startWeek < tDate){
+						var dayInfo = holiday.getDayInfo(tDate);
+						if (dayInfo.type === "holiday_day"){
+							columns += "<td style='background-color:grey;min-width:" + 
+							dayWithContent + "px;max-width:" + 
+							dayWithContent + "px;padding-left:" + indexDay * dayWithContent +
+							 "px;> </td>";
+						}
+
+					}
+					
+					// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+					// 	scales[scale].mainUnitMilliSec);
+					
+					columns += "</td>";
+				}
+				break;
+			default:
+				//только для шкал [0..3] надо рисовать столбцы
+				columns += "<td> </td>"; 
+				break;
 		}
+
 		columns += "</tr></table>";
 		$(".gantChartArea").append(columns);
 		$(".columns td").css("min-width", widthColumnsContent);
 		$(".columns td").css("max-width", widthColumnsContent);
 		$(".columns td").css("text-align", "center");
 
+		// вычисляем высоту колонок с рабочим временем
 		var heightColumns = $(".gantChartArea").height() - $('.unit').height() -
 			$('.mainUnit').height();
 		$(".columns td").css("height",heightColumns);
-
 
 
 		//рисуем задачи, хотя это нужно делать не здесь
