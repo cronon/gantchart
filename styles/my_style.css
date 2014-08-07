@@ -47,3 +47,14 @@ td.free-time{
   background-color:gray;
   position: relative;
 }
+
+table.mainUnit td{
+  border: solid 1px black;
+}
+
+table td{
+  border-top: solid 0px black;
+} 
+.mainUnit td:not(.first){
+  text-align: center;
+}

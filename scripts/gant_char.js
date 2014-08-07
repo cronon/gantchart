@@ -22,7 +22,7 @@
 		        else e.returnValue = false;
 
 		        //console.log("Work hah " + new Date());
-		        if (e.deltaY > 0 || e.clientY > 0){
+		        if (e.wheelDelta > 0 || e.detail > 0){
 		        	if (scale < 9){
 		        		scale++;
 		        	} else {
@@ -46,6 +46,7 @@
 	//праздники
 	function Holidays () {
 		var _holidays = [];
+		var MS_IN_HOUR = 3600 * 1000;
 
 		// Маловероятное значение для года вначале,
 		// чтобы в первый раз initHolidays инициализировал 
@@ -90,12 +91,14 @@
 		 * по году, месяцу и дню.
 		 */
 		function equalsDateByDay (date1, date2) {
-			var date1BeforeDay = new Date(date1.getFullYear(), date1.getMonth(),
-				date1.getDate());
-			var date2BeforeDay = new Date(date2.getFullYear(), date2.getMonth(),
-				date2.getDate());
+			var d1 = [date1.getFullYear(), date1.getMonth(),
+				date1.getDate()];
+			var d2 = [date2.getFullYear(), date2.getMonth(),
+				date2.getDate()];
 
-			return date1BeforeDay - date2BeforeDay === 0;	
+			return (d1[0] == d2[0]) && (d1[1] == d2[1]) && (d1[2] == d2[2]);
+			return date1BeforeDay - date2BeforeDay === 0;
+			return Math.floor(date1.getTime() / MS_IN_HOUR*24) === Math.floor(date2.getTime() / MS_IN_HOUR*24);	
 		}
 
 		this.getDayInfo = function (date, needInfoByNextDay) {
@@ -120,7 +123,6 @@
 			var dayDate = new Date(date.getFullYear(), date.getMonth(),
 				date.getDate());
 			var dayInMillisec = dayDate.getTime();
-			var MS_IN_HOUR = 3600 * 1000;
 
 			var dayInfo = {
 				type: "work_day",
@@ -132,7 +134,8 @@
 			 				{
 			 					start: new Date(dayInMillisec + 14 * MS_IN_HOUR),
 			 					end: new Date(dayInMillisec + 18 * MS_IN_HOUR)
-			 			}]
+			 			}],
+			 	isHoliday: false
 			};
 
 			if (findedHoliday.length > 0){
@@ -155,6 +158,10 @@
 					//более ранний конец рабочего дня
 					dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * MS_IN_HOUR);
 				}
+			}
+
+			if (dayInfo.schedule[0].end <= date && date < dayInfo.schedule[1].start){
+				dayInfo.type = "holiday_day";
 			}
 
 			return dayInfo;
@@ -626,7 +633,7 @@
 			var dayInfo = holidaysSingletone.getDayInfo(tDate);
 			var klass = dayInfo.type == 'holiday_day' ? 'free-time' : ''; 
 
-			
+
 			setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
 			if (scale < 4){
 				columns += "<td class=\""+klass+"\"></td>";
@@ -635,16 +642,13 @@
 		}		
 
 		setka += "</tr></table>";		
-		$(".gantChartArea").append(setka);				
-		$(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
-		$(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);
-		$(".mainUnit td:not(.first)").css("text-align","center");		
-		$("table.mainUnit td").css("border","solid 1px black");
+		$(".gantChartArea").append(setka);
 
-		$("table td").css("border-top","solid 0px black");		
+		$(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
+		$(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);		
 		
 
-		//рисуем столбцы обозначающие рабочее время
+		//אלכךעסחזש
 		tDate.setTime(cSDMU.getTime());
 
 		var timeWidthColumns = scales[scale].unitMilliSec;
