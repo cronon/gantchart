@@ -1,14 +1,6 @@
 ﻿$(document).ready(function(){
 	
-	// $(window).bind('mousewheel DOMMouseScroll', function(event){
-	// 	var e = event;
-	//     if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
-	//         // scroll up
-	//     }
-	//     else {
-	//         // scroll down
-	//     }
-	// });
+	var redrawCompleteFlag = false;
 
 	var obj = document.body;  // obj=element for example body
 	// bind mousewheel event on the mouseWheel function
@@ -21,33 +13,34 @@
 
 	function mouseWheel(e)
 	{
-	    // disabling
-	    e=e?e:window.event;
-	    if(e.ctrlKey)
-	    {
-	        if(e.preventDefault) e.preventDefault();
-	        else e.returnValue = false;
+		if (redrawCompleteFlag){
+		    // disabling
+		    e=e?e:window.event;
+		    if(e.ctrlKey)
+		    {
+		        if(e.preventDefault) e.preventDefault();
+		        else e.returnValue = false;
 
-	        console.log("Work hah " + new Date());
-	        if (e.deltaY > 0){
-	        	if (scale > 0){
-	        		scale--;
-	        	} else if (scale == 0){
-	        		scale = 9;
-	        	}
-	        } else {
-	        	if (scale < 9) {
-					scale++;
-				} else {
-					scale = 0;
-				}
-	        }
-	        
-		
-			showScale(scale,chartStartDateF,chartEndDateF);
+		        console.log("Work hah " + new Date());
+		        if (e.deltaY > 0){
+		        	if (scale > 0){
+		        		scale--;
+		        	} else if (scale == 0){
+		        		scale = 9;
+		        	}
+		        } else {
+		        	if (scale < 9) {
+						scale++;
+					} else {
+						scale = 0;
+					}
+		        }
+		        
+				showScale(scale,chartStartDateF,chartEndDateF);
 
-	        return false;
-	    }
+		        return false;
+		    }
+		}
 	}
 
 	//праздники
@@ -169,8 +162,6 @@
 		}
 		
 	}
-
-	holiday = new Holidays();
 
 	var scale = 0;
 	var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
@@ -564,6 +555,9 @@
 	});
 
 	function showScale(scale, chartStartDate, chartEndDate) {
+
+		redrawCompleteFlag = false;
+
 		var k;
 		var tDate = new Date();
 		var	cSDU = new Date(), cEDU=new Date(), cSDMU=new Date(), cEDMU=new Date();
@@ -600,19 +594,20 @@
 			setka += "<td class='first' style='background:yellow; min-width:" +
 			widthUnitContent + "px; max-width:" + widthUnitContent + "px'></td>";			
 		}		
-		tDate.setTime(cSDU.getTime());		
+		tDate.setTime(cSDU.getTime());
+		widthUnitContent = scales[scale].unitLength(tDate);	
+		
 		while (tDate <= cEDU) {						
-			widthUnitContent = scales[scale].unitLength(tDate);	
+			setka += "<td>" + scales[scale].getUnit(tDate) + "</td>";
 
-			setka += "<td style='min-width:" + widthUnitContent + 
-			"px; max-width:" + widthUnitContent + "px'>" + 
-			scales[scale].getUnit(tDate) + "</td>";
-
-			tDate = scales[scale].unitPrevNextPeriod(tDate, "next+", 
-				scales[scale].unitMilliSec);
+			// tDate = scales[scale].unitPrevNextPeriod(tDate, "next+", 
+			// 	scales[scale].unitMilliSec);
+			tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
 		}
 		setka += "</tr></table>";		
 		$(".gantChartArea").html(setka);
+		$(".unit td").css("min-width", widthUnitContent);
+		$(".unit td").css("max-width", widthUnitContent);
 		
 		setka = "<table class='mainUnit'><tr>";
 		if (cSDMU > cSDU) {						
@@ -625,8 +620,9 @@
 		tDate.setTime(cSDMU.getTime());
 		while (tDate <= cEDMU) {			
 			setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
-			tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-				scales[scale].mainUnitMilliSec);
+			// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+			// 	scales[scale].mainUnitMilliSec);
+			tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
 		}		
 		setka += "</tr></table>";		
 		$(".gantChartArea").append(setka);				
@@ -640,13 +636,27 @@
 		//рисуем столбцы обозначающие рабочее время
 		var columns = "<table class='columns'><tr>";
 		tDate.setTime(cSDMU.getTime());
+
+		var timeWidthColumns = scales[scale].unitMilliSec;
+		var widthColumnsContent = scales[scale].unitLength(tDate);
 		while (tDate <= cEDMU) {			
-			setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
-			tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-				scales[scale].mainUnitMilliSec);
+			columns += "<td> </td>";
+			// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+			// 	scales[scale].mainUnitMilliSec);
+			tDate.setTime(tDate.getTime() + timeWidthColumns);
 		}
 		columns += "</tr></table>";
-		
+		$(".gantChartArea").append(columns);
+		$(".columns td").css("min-width", widthColumnsContent);
+		$(".columns td").css("max-width", widthColumnsContent);
+		$(".columns td").css("text-align", "center");
+
+		var heightColumns = $(".gantChartArea").height() - $('.unit').height() -
+			$('.mainUnit').height();
+		$(".columns td").css("height",heightColumns);
+
+
+
 		//рисуем задачи, хотя это нужно делать не здесь
 		var begD = new Date();
 		var left,top,width;
@@ -662,6 +672,8 @@
 			setka = "<div class='gantChartBar' style='overflow:auto;left:"+ left +"px;top:"+top+"px;width:"+width+"px;height:63px'>"+i+"; "+startDate+"; "+endDate+"</div>";
 			$(".gantChartArea").append(setka);
 		});
+
+		redrawCompleteFlag = true;
 	}
 
 	showScale(scale,chartStartDateF,chartEndDateF);		
