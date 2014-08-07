@@ -21,7 +21,7 @@
 		        if(e.preventDefault) e.preventDefault();
 		        else e.returnValue = false;
 
-		        console.log("Work hah " + new Date());
+		        //console.log("Work hah " + new Date());
 		        if (e.deltaY > 0 || e.clientY > 0){
 		        	if (scale < 9){
 		        		scale++;
@@ -54,7 +54,7 @@
 		function initHolidays (date) {
 
 			var oldYear = year;
-			var year = date.getFullYear();
+			year = date.getFullYear();
 
 			//Что бы не пересчитывать, если год не изменился.
 			if (oldYear != year){
@@ -120,20 +120,19 @@
 			var dayDate = new Date(date.getFullYear(), date.getMonth(),
 				date.getDate());
 			var dayInMillisec = dayDate.getTime();
-			var hourMs = 3600 * 1000;
+			var MS_IN_HOUR = 3600 * 1000;
 
 			var dayInfo = {
 				type: "work_day",
 			 	schedule: [{
-			 					start: new Date(dayInMillisec + 9 * hourMs),
-			 					end: new Date(dayInMillisec + 13 * hourMs)
+			 					start: new Date(dayInMillisec + 9 * MS_IN_HOUR),
+			 					end: new Date(dayInMillisec + 13 * MS_IN_HOUR)
 			 				}, 
 
 			 				{
-			 					start: new Date(dayInMillisec + 14 * hourMs),
-			 					end: new Date(dayInMillisec + 18 * hourMs)
-			 				}
-			 	]
+			 					start: new Date(dayInMillisec + 14 * MS_IN_HOUR),
+			 					end: new Date(dayInMillisec + 18 * MS_IN_HOUR)
+			 			}]
 			};
 
 			if (findedHoliday.length > 0){
@@ -141,7 +140,7 @@
 			} else if (dayIndex === 5){ //если день не праздник, то проверка на пятницу
 				dayInfo.type = "before_holiday";
 				//более ранний конец рабочего дня
-				dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * hourMs);
+				dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * MS_IN_HOUR);
 			}
 
 			// условие для рекурсии
@@ -154,7 +153,7 @@
 				if (nextDay.type === "holiday_day"){
 					dayInfo.type = "before_holiday";
 					//более ранний конец рабочего дня
-					dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * hourMs);
+					dayInfo.schedule[1].end = new Date(dayInMillisec + 17 * MS_IN_HOUR);
 				}
 			}
 
@@ -581,8 +580,8 @@
 		}
 		
 		console.log("scale = ",scale);
-		console.log("chartEndDate = ", chartEndDate);
-		console.log("cEDU = ",cEDU, " cEDMU = ",cEDMU);
+		// console.log("chartEndDate = ", chartEndDate);
+		// console.log("cEDU = ",cEDU, " cEDMU = ",cEDMU);
 		
 		var widthUnitContent;
 		var setka = "<table class='unit'><tr>";				
@@ -597,7 +596,7 @@
 		tDate.setTime(cSDU.getTime());
 		widthUnitContent = scales[scale].unitLength(tDate);	
 		
-		while (tDate <= cEDU) {						
+		while (tDate <= cEDU) {				
 			setka += "<td>" + scales[scale].getUnit(tDate) + "</td>";
 
 			// tDate = scales[scale].unitPrevNextPeriod(tDate, "next+", 
@@ -609,21 +608,32 @@
 		$(".unit td").css("min-width", widthUnitContent);
 		$(".unit td").css("max-width", widthUnitContent);
 		
+		// нижние деления
 		setka = "<table class='mainUnit'><tr>";
 		if (cSDMU > cSDU) {						
 			k = (cSDMU.getTime()-cSDU.getTime())/scales[scale].mainUnitMilliSec;
 			widthUnitContent = Math.round((cSDMU.getTime()-cSDU.getTime()) /
 				scales[scale].mainUnitMilliSec*scales[scale].mainUnitLength+k-1); //k-1 - это для учёта кол-ва ненарисованных границ, но почему-то для недели не работает -небольшой сдвиг там есть (			
 			setka += "<td class='first' style='background:yellow; min-width:" +
-			widthUnitContent + "px; max-width:" + widthUnitContent + "px; width:" + widthUnitContent + "px; height:21px'></td>";
+				widthUnitContent + "px; max-width:" + widthUnitContent + "px; width:" + 
+				widthUnitContent + "px; height:21px'></td>";
 		}		
 		tDate.setTime(cSDMU.getTime());
-		while (tDate <= cEDMU) {			
+
+		var columns = "<table class='columns'><tr>";		
+		var holidaysSingletone = holidaysSingletone || (new Holidays());
+		while (tDate <= cEDMU) {
+			var dayInfo = holidaysSingletone.getDayInfo(tDate);
+			var klass = dayInfo.type == 'holiday_day' ? 'free-time' : ''; 
+
+			
 			setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
-			// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-			// 	scales[scale].mainUnitMilliSec);
+			if (scale < 4){
+				columns += "<td class=\""+klass+"\"></td>";
+			}
 			tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
 		}		
+
 		setka += "</tr></table>";		
 		$(".gantChartArea").append(setka);				
 		$(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
@@ -635,64 +645,24 @@
 		
 
 		//рисуем столбцы обозначающие рабочее время
-		var columns = "<table class='columns'><tr>";
 		tDate.setTime(cSDMU.getTime());
 
 		var timeWidthColumns = scales[scale].unitMilliSec;
-		var widthColumnsContent = scales[scale].unitLength(tDate);
+		var widthColumnsContent = scales[scale].mainUnitLength;
 
-		switch(scale){
-			case 0:
-				break;
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				var holiday = new Holidays();
-				var dayWithContent = scales[scale].mainUnitLength;
-				var dayTimeWidth = scales[scale].mainUnitMilliSec;
-				while (tDate <= cEDMU) {	
-					//столбец по unit
-					columns += "<td>";
-					var startWeek = tDate;
-					//начало следущей недели в tDate
-					tDate.setTime(tDate.getTime() + timeWidthColumns);
+		if (scale < 4){
+			columns += "</tr></table>";
+			$(".gantChartArea").append(columns);
+			// Стили в строку и ко всему разу для производительности
+			var styleInStr = "<style> .columns td{ min-width:" + widthColumnsContent + 
+				"px;max-width:" + widthColumnsContent + "px}</style>";
+			$('head').append(styleInStr);
 
-					var indexDay = 0;
-					while (startWeek < tDate){
-						var dayInfo = holiday.getDayInfo(tDate);
-						if (dayInfo.type === "holiday_day"){
-							columns += "<td style='background-color:grey;min-width:" + 
-							dayWithContent + "px;max-width:" + 
-							dayWithContent + "px;padding-left:" + indexDay * dayWithContent +
-							 "px;> </td>";
-						}
-
-					}
-					
-					// tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-					// 	scales[scale].mainUnitMilliSec);
-					
-					columns += "</td>";
-				}
-				break;
-			default:
-				//только для шкал [0..3] надо рисовать столбцы
-				columns += "<td> </td>"; 
-				break;
+			// вычисляем высоту колонок с рабочим временем
+			var heightColumns = $(".gantChartArea").height() - $('.unit').height() -
+				$('.mainUnit').height();
+			$(".columns").css("height",heightColumns);
 		}
-
-		columns += "</tr></table>";
-		$(".gantChartArea").append(columns);
-		$(".columns td").css("min-width", widthColumnsContent);
-		$(".columns td").css("max-width", widthColumnsContent);
-		$(".columns td").css("text-align", "center");
-
-		// вычисляем высоту колонок с рабочим временем
-		var heightColumns = $(".gantChartArea").height() - $('.unit').height() -
-			$('.mainUnit').height();
-		$(".columns td").css("height",heightColumns);
 
 
 		//рисуем задачи, хотя это нужно делать не здесь
