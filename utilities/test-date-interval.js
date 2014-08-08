@@ -45,6 +45,32 @@ describe("Date Interval", function(){
       var actual = interval.includeInterval(otherInterval);
       expect(actual).toEqual(false);
     });
+  });
+
+  describe("isOverlap", function(){
+    it("returns true when overlap", function(){
+      var otherInterval = DateInterval("2014-08-01T00:00+0400","2014-08-01T15:00+0400");
+      actual = interval.isOverlap(otherInterval);
+      expect(actual).toEqual(true);
+    });
+
+    it("returns true when others overlaps", function(){
+      var otherInterval = DateInterval("2014-08-01T00:00+0400","2014-08-01T15:00+0400");
+      actual = otherInterval.isOverlap(interval);
+      expect(actual).toEqual(true);
+    });
+
+    it("returns true when it is including other", function(){
+      var otherInterval = DateInterval("2014-08-01T00:00+0400","2014-08-01T15:00+0400");
+      actual = otherInterval.isOverlap(interval);
+      expect(actual).toEqual(true);
+    });
+
+    it("returns false when doesn't overlap", function(){
+      var otherInterval = DateInterval("2014-08-02T00:00+0400","2014-08-02T15:00+0400");
+      actual = interval.isOverlap(otherInterval);
+      expect(actual).toEqual(false):
+    });
   })
 
 })

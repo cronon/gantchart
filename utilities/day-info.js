@@ -100,9 +100,5 @@ var getDayInfo = function(date, needInfoByNextDay) {
     }
   }
 
-  if (dayInfo.schedule[0].end <= date && date < dayInfo.schedule[1].start){
-    dayInfo.type = "holiday_day";
-  }
-
   return dayInfo;
 }
