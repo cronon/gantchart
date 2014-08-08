@@ -586,10 +586,8 @@
 				"next", scales[scale].mainUnitMilliSec);
 		}
 		
-		console.log("scale = ",scale);
-		// console.log("chartEndDate = ", chartEndDate);
-		// console.log("cEDU = ",cEDU, " cEDMU = ",cEDMU);
-		
+		console.log("scale = ",scale, " ", new Date());
+
 		var widthUnitContent;
 		var setka = "<table class='unit'><tr>";				
 		if (cSDU > cSDMU) {
@@ -615,6 +613,8 @@
 		$(".unit td").css("min-width", widthUnitContent);
 		$(".unit td").css("max-width", widthUnitContent);
 		
+		console.log("After draw units: "+ new Date());
+
 		// нижние деления
 		setka = "<table class='mainUnit'><tr>";
 		if (cSDMU > cSDU) {						
@@ -647,6 +647,7 @@
 		$(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
 		$(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);		
 		
+		console.log("After draw columns and mainUnits: " + new Date());
 
 		//אלכךעסחזש
 		tDate.setTime(cSDMU.getTime());
@@ -657,7 +658,7 @@
 		if (scale < 4){
 			columns += "</tr></table>";
 			$(".gantChartArea").append(columns);
-			// Стили в строку и ко всему разу для производительности
+			// Стили в строку и ко всему сразу для производительности
 			var styleInStr = "<style> .columns td{ min-width:" + widthColumnsContent + 
 				"px;max-width:" + widthColumnsContent + "px}</style>";
 			$('head').append(styleInStr);
@@ -667,7 +668,9 @@
 				$('.mainUnit').height();
 			$(".columns").css("height",heightColumns);
 		}
+		console.log("After draw styles for columns: " + new Date());
 
+		// Сей кусок в хроме исполняется 12 секунд тут главное "узкое место"
 
 		//рисуем задачи, хотя это нужно делать не здесь
 		var begD = new Date();
@@ -684,6 +687,8 @@
 			setka = "<div class='gantChartBar' style='overflow:auto;left:"+ left +"px;top:"+top+"px;width:"+width+"px;height:63px'>"+i+"; "+startDate+"; "+endDate+"</div>";
 			$(".gantChartArea").append(setka);
 		});
+
+		console.log("After draw tasks"+ new Date());
 
 		redrawCompleteFlag = true;
 	}
