@@ -9,6 +9,7 @@ function getDateBeforeWorkInNextDay (date) {
  * Возвращает интервал рабочего времени, в котором находится date;
  * добавляет метод getNext() к интервалу - сей метод возвращает
  * через рекурсию следущий интервал.
+ * Абосолютно не учитывается, если date приходится на выходной
  */
 var getWorkInterval = function (date, dayInfo) {
 	dayInfo = (dayInfo == undefined) ? getDayInfo(date): dayInfo;
@@ -38,4 +39,6 @@ var getWorkInterval = function (date, dayInfo) {
 	interval.getNext = function () {
 		return next;
 	}
+
+	return interval;
 }
