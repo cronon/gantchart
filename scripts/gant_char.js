@@ -475,6 +475,8 @@
     while (tDate <= cEDU) {
       setka += "<td>" + scales[scale].getUnit(tDate) + "</td>";
       tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
+      // tDate = scales[scale].unitPrevNextPeriod(tDate, "next+",
+      //   scales  [scale].unitMilliSec);
     }
     setka += "</tr></table>";
     $(".gantChartArea").html(setka);
@@ -515,7 +517,10 @@
       if (scale < 4){
         columns += "<td class=\""+klass+"\"></td>";
       }
+
       tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
+      // tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+      //   scales[scale].mainUnitMilliSec);
     }
 
     setka += "</tr></table>";
