@@ -48,27 +48,27 @@ describe("Day info", function(){
     it("for work days", function(){
       var dateString = "2014-08-06";
       actual = getDayInfo(new Date(dateString)).schedule;
-      expect(actual[0].begin).toEqual(new Date(dateString+"T09:00+0300"));
+      expect(actual[0].start).toEqual(new Date(dateString+"T09:00+0300"));
       expect(actual[0].end).toEqual(new Date(dateString+"T13:00+0300"));
-      expect(actual[1].begin).toEqual(new Date(dateString+"T14:00+0300"));
+      expect(actual[1].start).toEqual(new Date(dateString+"T14:00+0300"));
       expect(actual[1].end).toEqual(new Date(dateString+"T18:00+0300"));
     });
 
     it("is shrotened for days before holiday", function(){
       var dateString = "2014-08-08";
       actual = getDayInfo(new Date(dateString)).schedule;
-      expect(actual[0].begin).toEqual(new Date(dateString+"T09:00+0300"));
+      expect(actual[0].start).toEqual(new Date(dateString+"T09:00+0300"));
       expect(actual[0].end).toEqual(new Date(dateString+"T13:00+0300"));
-      expect(actual[1].begin).toEqual(new Date(dateString+"T14:00+0300"));
+      expect(actual[1].start).toEqual(new Date(dateString+"T14:00+0300"));
       expect(actual[1].end).toEqual(new Date(dateString+"T17:00+0300"));
     });
 
     it("with interval of invalid dates for holiday", function(){
       var dateString = "2014-01-01";
       actual = getDayInfo(new Date(dateString)).schedule;
-      expect(actual[0].begin.valueOf()).toBeNaN();
+      expect(actual[0].start.valueOf()).toBeNaN();
       expect(actual[0].end.valueOf()).toBeNaN();
-      expect(actual[1].begin.valueOf()).toBeNaN();
+      expect(actual[1].start.valueOf()).toBeNaN();
       expect(actual[1].end.valueOf()).toBeNaN();
     });
 

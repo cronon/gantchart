@@ -2,7 +2,7 @@
  * Время до работы на следущий день после date.
  */
 function getDateBeforeWorkInNextDay (date) {
-	return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 1);
+	return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 }
 
 /*
@@ -13,6 +13,7 @@ function getDateBeforeWorkInNextDay (date) {
  */
 var getWorkInterval = function (date, dayInfo) {
 	dayInfo = (dayInfo == undefined) ? getDayInfo(date): dayInfo;
+	//dayInfo = dayInfo || getDayInfo(date);
 
 	// интервалы:
 	//--0----|----1----|----2---|----3----|----4--
@@ -35,9 +36,8 @@ var getWorkInterval = function (date, dayInfo) {
 		}
 	}
 
-	// в сомнении: какого хрена не сделать сие полем?
 	interval.getNext = function () {
-		return next;
+		return getWorkInterval(next.end);
 	}
 
 	return interval;

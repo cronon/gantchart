@@ -1,12 +1,16 @@
-var DateInterval = function(begin, end){
+var DateInterval = function(start, end){
   return {
-    'begin': new Date(begin),
+    'start': new Date(start),
     'end': new Date(end),
+    'duration': (end - start),
     include: function(date){
-      return this.begin < date && date < this.end;
+      return this.start < date && date < this.end;
+    },
+    includeWeak: function(date){
+      return this.start <= date && date <= this.end;
     },
     includeInterval: function(interval){
-      return this.begin <= interval.begin && interval.end <= this.end;
+      return this.start <= interval.start && interval.end <= this.end;
     }
   }
 }

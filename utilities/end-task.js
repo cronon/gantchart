@@ -17,6 +17,13 @@ var getEndTask = function (startDate, duration) {
 	var accumulator = 0;
 	var endTask = new Date(startDate);
 	var dayInfo = getDayInfo(endTask);
+	var sumDates = function(date1, date2) {
+    return new Date(date1.getTime() + date2.getTime());
+  };
+
+  if(duration >= MS_IN_DAY*30){
+  	return sumDates(startDate, new Date(duration));
+  }
 
 	// сдвигаем начало задачи на рабочий день
 	while (dayInfo.type == "holiday_day"){
@@ -31,30 +38,29 @@ var getEndTask = function (startDate, duration) {
 		accumulator += dayDuration;
 		endTask.setTime(endTask.getTime() + MS_IN_DAY);
 		dayInfo = getDayInfo(endTask);
-
 		// опять сдвигаемся если выходной
 		// не сделано методом, ибо надо менять
 		// две переменные
-		while (dayInfo.type == "holiday_day"){
-			endTask = getDateBeforeWorkInNextDay(endTask);
-			dayInfo = getDayInfo(endTask);
-		}
-
+		// while (dayInfo.type == "holiday_day"){
+		// 	endTask = getDateBeforeWorkInNextDay(endTask);
+		// 	dayInfo = getDayInfo(endTask);
+		// }
 		dayDuration = getDayDuration(dayInfo);
 	}
 
+
 	// проход по половинам рабочего дня: 09-13 и 14-17/18
 	// смотрим сколько осталось до конца задачи
-	accumulator = duration - accumulator;
+	var remainder = duration - accumulator;
 	var interval = getWorkInterval(endTask, dayInfo);
-	while (accumulator > interval.duration){
-		accumulator -= (interval.end - endTask);
+	console.log(interval);
+	while (remainder > interval.duration){
+		remainder -= interval.includeWeak(endTask) ? (interval.end - endTask):  interval.duration;
 		endTask = interval.end;
 		interval = interval.getNext();
 	}
-
-	// должно остаться маленькое число в accumulator
-	endTask.setTime(interval.start.getTime() + accumulator);
+	// должно остаться маленькое число в remainder
+	endTask.setTime(interval.start.getTime() + remainder);
 
 	return endTask;
 }

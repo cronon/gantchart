@@ -1,5 +1,5 @@
 describe("Work interval", function(){
-  var date = new Date("2014-08-07T02:00+0400");
+  var date = new Date("2014-08-07T02:00+0300");
   var interval;
 
   it("function getNext() added to interval", function(){
@@ -14,81 +14,81 @@ describe("Work interval", function(){
 
   it("before work", function(){
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T09:00+0400"), 
-      new Date("2014-08-07T13:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T09:00+0300"), 
+      new Date("2014-08-07T13:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day at 9:00", function(){ 
-    date = new Date("2014-08-07T09:00+0400"); 
+    date = new Date("2014-08-07T09:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T09:00+0400"), 
-      new Date("2014-08-07T13:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T09:00+0300"), 
+      new Date("2014-08-07T13:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day between 9:00 and 13:00", function() {
-    date = new Date("2014-08-07T11:00+0400"); 
+    date = new Date("2014-08-07T11:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T09:00+0400"), 
-      new Date("2014-08-07T13:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T09:00+0300"), 
+      new Date("2014-08-07T13:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day at 13:00", function() {
-    date = new Date("2014-08-07T13:00+0400"); 
+    date = new Date("2014-08-07T13:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T09:00+0400"), 
-      new Date("2014-08-07T13:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T09:00+0300"), 
+      new Date("2014-08-07T13:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day between 13:00 and 14:00", function() {
-    date = new Date("2014-08-07T13:30+0400"); 
+    date = new Date("2014-08-07T13:30+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T14:00+0400"), 
-      new Date("2014-08-07T18:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T14:00+0300"), 
+      new Date("2014-08-07T18:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day at 14:00", function() {
-    date = new Date("2014-08-07T14:00+0400"); 
+    date = new Date("2014-08-07T14:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T14:00+0400"), 
-      new Date("2014-08-07T18:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T14:00+0300"), 
+      new Date("2014-08-07T18:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day between 14:00 and 18:00", function() {
-    date = new Date("2014-08-07T15:00+0400"); 
+    date = new Date("2014-08-07T15:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T14:00+0400"), 
-      new Date("2014-08-07T18:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T14:00+0300"), 
+      new Date("2014-08-07T18:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("work day at 18:00", function() {
-    date = new Date("2014-08-07T18:00+0400"); 
+    date = new Date("2014-08-07T18:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-07T14:00+0400"), 
-      new Date("2014-08-07T18:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-07T14:00+0300"), 
+      new Date("2014-08-07T18:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 
   it("after work", function() {
-    date = new Date("2014-08-07T19:00+0400"); 
+    date = new Date("2014-08-07T19:00+0300"); 
     var actual = getWorkInterval(date);
-    var expect = DateInterval(new Date("2014-08-08T09:00+0400"), 
-      new Date("2014-08-08T13:00+0400"));
-    expect(actual.begin).toEqual(expect.begin);
-    expect(actual.end).toEqual(expect.end);
+    var expected = DateInterval(new Date("2014-08-08T09:00+0300"), 
+      new Date("2014-08-08T13:00+0300"));
+    expect(actual.start).toEqual(expected.start);
+    expect(actual.end).toEqual(expected.end);
   });
 })
