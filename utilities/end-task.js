@@ -38,13 +38,6 @@ var getEndTask = function (startDate, duration) {
 		accumulator += dayDuration;
 		endTask.setTime(endTask.getTime() + MS_IN_DAY);
 		dayInfo = getDayInfo(endTask);
-		// опять сдвигаемся если выходной
-		// не сделано методом, ибо надо менять
-		// две переменные
-		// while (dayInfo.type == "holiday_day"){
-		// 	endTask = getDateBeforeWorkInNextDay(endTask);
-		// 	dayInfo = getDayInfo(endTask);
-		// }
 		dayDuration = getDayDuration(dayInfo);
 	}
 
@@ -53,7 +46,6 @@ var getEndTask = function (startDate, duration) {
 	// смотрим сколько осталось до конца задачи
 	var remainder = duration - accumulator;
 	var interval = getWorkInterval(endTask, dayInfo);
-	console.log(interval);
 	while (remainder > interval.duration){
 		remainder -= interval.includeWeak(endTask) ? (interval.end - endTask):  interval.duration;
 		endTask = interval.end;

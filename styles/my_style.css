@@ -58,3 +58,9 @@ table td{
 .mainUnit td:not(.first){
   text-align: center;
 }
+
+tr.unit > td, tr.mainUnit > td {
+  border: 1px solid black;
+  border-color: transparent black;
+  border-collapse: collapse;
+}

@@ -167,7 +167,7 @@
 
   function mostPrevNextPeriod(myDate, dir, milliSecPeriod){
     var periodDate=new Date("Jan 01, "+myDate.getFullYear()); //пока здесь хранится начало года
-    var k=(myDate.getTime()-periodDate.getTime())/milliSecPeriod;
+    var k=(myDate.getTime()-periodDate.getTime())/milliSecPeriod; //count of periods
 
     if (k - Math.floor(k) == 0 && (dir=="prev" || dir=="next")) {
       periodDate.setTime(myDate.getTime());
@@ -221,6 +221,9 @@
       unitMilliSec: 60*60*1000,
       mainUnitLength: 24, //ширина в px
       unitLength: mostUnitLength,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         return dft.getMinutes();
       },
@@ -238,6 +241,9 @@
       mainUnitMilliSec: 2*60*60*1000,
       unitMilliSec: 24*60*60*1000,
       mainUnitLength: 20,
+      getUnitsCount: function(date){
+        return 12;
+      },
       getMainUnit: function(dft){
         return dft.getHours();
       },
@@ -253,7 +259,11 @@
       // день по 6 часов
       mainUnit: "6H", unit: "D",
       mainUnitMilliSec: 6*60*60*1000,
-      unitMilliSec:24*60*60*1000, mainUnitLength:20,
+      unitMilliSec:24*60*60*1000, 
+      mainUnitLength:20,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         return dft.getHours();
       },
@@ -271,6 +281,9 @@
       mainUnitMilliSec: 24*60*60*1000, //один день
       unitMilliSec:7*24*60*60*1000, //неделя
       mainUnitLength:20,
+      getUnitsCount: function(date){
+        return 7;
+      },
       getMainUnit: function(dft){
         return daysOfWeek[dft.getDay()].charAt(0);
       },
@@ -289,6 +302,15 @@
       mainUnitMilliSec: 3*24*60*60*1000,
       unitMilliSec: 30.4375*24*60*60*1000,
       mainUnitLength: 25,
+      getUnitsCount: function(date){
+        var result = 10;
+        switch(date.getMonth()){
+          case 0: result = 11; break;
+          case 1: result = 9; break;
+          case 2: result = 10; break;
+        }
+        return result;
+      },
       getMainUnit: function(dft){
         return dft.getDate();
       },
@@ -305,6 +327,9 @@
       mainUnitMilliSec: 7*24*60*60*1000,
       unitMilliSec: 30.4375*24*60*60*1000,
       mainUnitLength:30,
+      getUnitsCount: function(date){
+        return Math.floor(date.getDaysInMonth() / 7);
+      },      
       getMainUnit: function(dft){
         return dft.getDate();
       },
@@ -322,6 +347,9 @@
       mainUnitMilliSec: 30.4375*24*60*60*1000,
       unitMilliSec: 3*30.4375*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 3;
+      },
       getMainUnit: function(dft){
         return months[dft.getMonth()].substr(0,3);
       },
@@ -349,6 +377,9 @@
       mainUnitMilliSec: 30.4375*24*60*60*1000,
       unitMilliSec: 6*30.4375*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 6;
+      },
       getMainUnit: function(dft){
         return months[dft.getMonth()].charAt(0);
       },
@@ -371,6 +402,9 @@
       mainUnitMilliSec: 3*30.4375*24*60*60*1000,
       unitMilliSec: 365.25*24*60*60*1000,
       mainUnitLength: 24,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         var q;
         q = dft.getMonth();
@@ -395,6 +429,9 @@
       mainUnitMilliSec: 6*30.4375*24*60*60*1000,
       unitMilliSec: 365.25*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 2;
+      },
       getMainUnit: function(dft){
         var q;
         q=dft.getMonth();
@@ -428,6 +465,7 @@
     } else {
       item.mainUnitPrevNextPeriod = mostPrevNextPeriod;
     }
+
   });
 
 
@@ -460,42 +498,40 @@
     console.log("scale = ",scale);
 
     var widthUnitContent;
-    var setka = "<table class='unit'><tr>";
+    var units = "<tr class='unit'>";
     if (cSDU > cSDMU) {
       tDate = scales[scale].unitPrevNextPeriod(cSDU, "prev+",
        scales[scale].unitMilliSec);
       widthUnitContent = Math.round((cSDU.getTime()-cSDMU.getTime()) /
         scales[scale].unitMilliSec*scales[scale].unitLength(tDate));
-      setka += "<td class='first' style='background:yellow; min-width:" +
+      units += "<td class='first' style='background:yellow; min-width:" +
       widthUnitContent + "px; max-width:" + widthUnitContent + "px'></td>";
     }
     tDate.setTime(cSDU.getTime());
     widthUnitContent = scales[scale].unitLength(tDate);
 
     while (tDate <= cEDU) {
-      setka += "<td>" + scales[scale].getUnit(tDate) + "</td>";
-      tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
-      // tDate = scales[scale].unitPrevNextPeriod(tDate, "next+",
-      //   scales  [scale].unitMilliSec);
+      units += "<td colspan='"+scales[scale].getUnitsCount(tDate)+"'>" + scales[scale].getUnit(tDate) + "</td>";
+      //tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
+      tDate = scales[scale].unitPrevNextPeriod(tDate, "next+",
+      scales [scale].unitMilliSec);
+
     }
-    setka += "</tr></table>";
-    $(".gantChartArea").html(setka);
-    $(".unit td").css("min-width", widthUnitContent);
-    $(".unit td").css("max-width", widthUnitContent);
+    units += "</tr>";
 
     // нижние деления
-    setka = "<table class='mainUnit'><tr>";
+    mainUnits = "<tr class='mainUnit'>";
     if (cSDMU > cSDU) {
       k = (cSDMU.getTime()-cSDU.getTime())/scales[scale].mainUnitMilliSec;
       widthUnitContent = Math.round((cSDMU.getTime()-cSDU.getTime()) /
         scales[scale].mainUnitMilliSec*scales[scale].mainUnitLength+k-1); //k-1 - это для учёта кол-ва ненарисованных границ, но почему-то для недели не работает -небольшой сдвиг там есть (
-      setka += "<td class='first' style='background:yellow; min-width:" +
+      mainUnits += "<td class='first' style='background:yellow; min-width:" +
         widthUnitContent + "px; max-width:" + widthUnitContent + "px; width:" +
         widthUnitContent + "px; height:21px'></td>";
     }
     tDate.setTime(cSDMU.getTime());
 
-    var columns = "<table class='columns'><tr>";
+    var columns = "<tr class='columns'>";
     while (tDate <= cEDMU) {
       var dayInfo = getDayInfo(tDate);
       var mainUnitInterval = DateInterval(tDate.getTime(), tDate.getTime() + scales[scale].mainUnitMilliSec);
@@ -512,24 +548,24 @@
       } else {
         klass = 'free-time';
       }
-      setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
+      mainUnits += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
 
       if (scale < 4){
         columns += "<td class=\""+klass+"\"></td>";
       }
 
-      tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
-      // tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
-      //   scales[scale].mainUnitMilliSec);
+      // tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
+      tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+        scales[scale].mainUnitMilliSec);
     }
 
-    setka += "</tr></table>";
-    $(".gantChartArea").append(setka);
-
+    mainUnits += "</tr>";
+    columns += "</tr></table>";
     // #slowcode#
+    $(".gantChartArea").html(units + mainUnits + columns);
+
     $(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
     $(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);
-
 
     tDate.setTime(cSDMU.getTime());
 
@@ -537,8 +573,6 @@
     var widthColumnsContent = scales[scale].mainUnitLength;
 
     if (scale < 4){
-      columns += "</tr></table>";
-      $(".gantChartArea").append(columns);
       // Стили в строку и ко всему сразу для производительности
       var styleInStr = "<style> .columns td{ min-width:" + widthColumnsContent +
         "px;max-width:" + widthColumnsContent + "px}</style>";
@@ -549,7 +583,6 @@
         $('.mainUnit').height();
       $(".columns").css("height",heightColumns);
     }
-
 
     //рисуем задачи, хотя это нужно делать не здесь
     var begD = new Date();
