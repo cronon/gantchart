@@ -23,10 +23,10 @@
 
         if (e.wheelDelta < 0 || e.detail < 0){
           scale += 1;
-          if( scale > 9) scale = 0;
+          if( scale > 9) scale = 9;
         } else {
           scale -= 1;
-          if( scale < 0) scale = 9;
+          if( scale < 0) scale = 0;
         }
 
         showScale(scale,chartStartDateF,chartEndDateF);
