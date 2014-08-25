@@ -9,7 +9,7 @@
       obj.addEventListener('DOMMouseScroll',mouseWheel,false);
       obj.addEventListener("mousewheel",mouseWheel,false);
   }
-  else obj.onmousewheel=mouseWheel;
+  else obj.onmousewheel = mouseWheel;
 
   function mouseWheel(e)
   {
@@ -100,7 +100,7 @@
 
   Date.prototype.getDaysInYear = function(){
       var y = this.getFullYear();
-      return (y % 4 == 0 && y % 100 != 0 || y % 400 == 0)?366:365;
+      return (y % 4 == 0 && y % 100 != 0 || y % 400 == 0) ? 366 : 365;
   };
 
   Date.prototype.getDaysInMonth = function(){
