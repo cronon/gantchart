@@ -13,7 +13,7 @@ $.fn.editableTableWidget = function (options) {
 			editor = activeOptions.editor.css('position', 'absolute').hide().appendTo(element.parent()),
 			active,
 			showEditor = function (select) {
-				active = element.find('td:focus');
+				active = element.find('td:focus:not(td:first-child)');
 				if (active.length) {
 					editor.val(active.text())
 						.removeClass('error')
@@ -29,11 +29,6 @@ $.fn.editableTableWidget = function (options) {
 				}
 			},
 			setActiveText = function () {
-				var getTextNodes = function(node){
-					node.contents().filter(function() {
-						return this.nodeType == 3;
-					}).text()
-				}
 				var text = editor.val(),
 					evt = $.Event('change'),
 					originalContent;
@@ -41,6 +36,8 @@ $.fn.editableTableWidget = function (options) {
 					return true;
 				}
 				originalContent = active.text();
+
+				// replace only text
 				active.contents().filter(function() {
 				  return this.nodeType == 3;
 				})[0].nodeValue = text;
@@ -97,6 +94,7 @@ $.fn.editableTableWidget = function (options) {
 				editor.removeClass('error');
 			}
 		});
+
 		element.on('click keypress dblclick', showEditor)
 		.css('cursor', 'pointer')
 		.keydown(function (e) {

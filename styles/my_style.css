@@ -1,4 +1,6 @@
-
+#tasks .selected {
+  background-color: wheat;
+}
 .gantChart {
     width: 90%;
     height:  90vh;

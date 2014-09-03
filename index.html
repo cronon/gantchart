@@ -13,9 +13,12 @@
         <script type="text/javascript" src="scripts/jquery.resizableColumns.min.js"></script>
         <link rel="stylesheet" href="styles/jquery.resizableColumns.css">
 
+        <!-- customized script, disabled input on very first cells of rows -->
         <script type="text/javascript" src="scripts/mindmup-editabletable.js"></script>
 
         <script type="text/javascript" src="scripts/jquery.treetable.js"></script>
+
+        <script type="text/javascript" src="scripts/left-table.js"></script>
         <script type="text/javascript" src="utilities/date-interval.js"></script>
         <script type="text/javascript" src="utilities/day-info.js"></script>
         <script type="text/javascript" src="utilities/work-interval.js"></script>
@@ -64,17 +67,6 @@
             <div class="gantChartArea"></div>    
         </div>
 
-        <script>
-            $(function(){
-                $("#tasks")
-                    .treetable({ 
-                        column: 1,
-                        expandable: true
-                    })
-                    .resizableColumns()
-                    .editableTableWidget()
-            })
-        </script>
 	</body>
     <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>-->
     <!--<script type="text/javascript" src="scripts\drag_resize_v1.1.js"></script>-->
