@@ -1,73 +1,79 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles/my_style.css">
-        <link rel="stylesheet" href="styles/jquery.treetable.css">
-        <link rel="stylesheet" href="styles/jquery.treetable.theme.default.css">
-        <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/my_style.css">
+    <link rel="stylesheet" href="styles/jquery.treetable.css">
+    <link rel="stylesheet" href="styles/jquery.treetable.theme.default.css">
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
 
-        <script type="text/javascript" src="scripts/jquery.resizableColumns.min.js"></script>
-        <link rel="stylesheet" href="styles/jquery.resizableColumns.css">
+    <script type="text/javascript" src="scripts/jquery.resizableColumns.min.js"></script>
+    <link rel="stylesheet" href="styles/jquery.resizableColumns.css">
 
-        <!-- customized script, disabled input on very first cells of rows -->
-        <script type="text/javascript" src="scripts/mindmup-editabletable.js"></script>
+    <!-- customized script, disabled input on very first cells of rows -->
+    <script type="text/javascript" src="scripts/mindmup-editabletable.js"></script>
 
-        <script type="text/javascript" src="scripts/jquery.treetable.js"></script>
+    <script type="text/javascript" src="scripts/jquery.treetable.js"></script>
 
-        <script type="text/javascript" src="scripts/left-table.js"></script>
-        <script type="text/javascript" src="utilities/date-interval.js"></script>
-        <script type="text/javascript" src="utilities/day-info.js"></script>
-        <script type="text/javascript" src="utilities/work-interval.js"></script>
-        <script type="text/javascript" src="utilities/end-task.js"></script>
+    <script type="text/javascript" src="scripts/left-table.js"></script>
+    <script type="text/javascript" src="utilities/date-interval.js"></script>
+    <script type="text/javascript" src="utilities/day-info.js"></script>
+    <script type="text/javascript" src="utilities/work-interval.js"></script>
+    <script type="text/javascript" src="utilities/end-task.js"></script>
 
-        <script type="text/javascript" src="scripts/gant_char.js"></script>
-    </head>
-    <body>
+    <script type="text/javascript" src="scripts/gant_char.js"></script>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col">
         <table id="tasks">
-            <thead>
-                <th></th>
-                <th>Task name</th>
-                <th>Duration</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Predecessors</th>
-            </thead>
-            <tbody>
-                <tr data-tt-id="1" >
-                    <td>1</td>
-                    <td>Begin</td>
-                    <td>180</td>
-                    <td>Today</td>
-                    <td>Tomorrow</td>
-                    <td></td>
-                </tr>
-                <tr data-tt-id="2" >
-                    <td>2</td>
-                    <td>Interlude</td>
-                    <td>180</td>
-                    <td>Tomorrow</td>
-                    <td>The day after tomorrow</td>
-                    <td>1</td>
-                </tr>
-                <tr data-tt-id="3" data-tt-parent-id="2">
-                    <td>3</td>
-                    <td>interlude beginning</td>
-                    <td>180</td>
-                    <td>Today</td>
-                    <td>Tomorrow</td>
-                    <td></td>
-                </tr>
-            </tbody>
+          <thead>
+            <th></th>
+            <th>Task name</th>
+            <th>Duration</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Predecessors</th>
+          </thead>
+          <tbody>
+            <tr data-tt-id="1" >
+              <td></td>
+              <td>Begin</td>
+              <td>180</td>
+              <td>Today</td>
+              <td>Tomorrow</td>
+              <td></td>
+            </tr>
+            <tr data-tt-id="2" >
+              <td></td>
+              <td>Interlude</td>
+              <td>180</td>
+              <td>Tomorrow</td>
+              <td>The day after tomorrow</td>
+              <td>1</td>
+            </tr>
+            <tr data-tt-id="3" data-tt-parent-id="2">
+              <td></td>
+              <td>interlude beginning</td>
+              <td>180</td>
+              <td>Today</td>
+              <td>Tomorrow</td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
+      </div><!-- .col -->
+      <div class="col">
         <div class="gantChart">
-            <div class="gantChartArea"></div>    
+          <div class="gantChartArea"></div>    
         </div>
+      </div>
+    </div><!-- .row -->
 
-	</body>
-    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>-->
-    <!--<script type="text/javascript" src="scripts\drag_resize_v1.1.js"></script>-->
+  </body>
+  <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>-->
+  <!--<script type="text/javascript" src="scripts\drag_resize_v1.1.js"></script>-->
 </html>

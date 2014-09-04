@@ -1,8 +1,36 @@
+.row {
+  margin: 0 -2px;
+}
+.row::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+.col {
+  float: left;
+  margin: 0 2px;
+  width: calc(50% - 4px);
+}
+#tasks {
+  counter-reset: row;
+  table-layout: fixed;
+}
+#tasks > tbody > tr > td {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#tasks > tbody > tr > td:first-child::after {
+  counter-increment: row;
+  content: counter(row);
+}
+#tasks > tbody > tr > td:first-child {
+  width: 12px;
+}
 #tasks .selected {
   background-color: wheat;
 }
 .gantChart {
-    width: 90%;
     height:  90vh;
     border: double grey;
 	overflow-x:scroll;
