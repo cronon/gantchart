@@ -95,8 +95,9 @@ $.fn.editableTableWidget = function (options) {
 			}
 		});
 
+		element.find("tbody").css('cursor', 'pointer')
+		element.find(".indenter").on("click keypress dblclick", function(e){e.stopPropagation();})
 		element.on('click keypress dblclick', showEditor)
-		.css('cursor', 'pointer')
 		.keydown(function (e) {
 			var prevent = true,
 				possibleMove = movement($(e.target), e.which);

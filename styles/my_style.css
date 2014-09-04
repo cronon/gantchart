@@ -23,6 +23,8 @@
 #tasks > tbody > tr > td:first-child::after {
   counter-increment: row;
   content: counter(row);
+  position: relative;
+  right: 8px;
 }
 #tasks > tbody > tr > td:first-child {
   width: 12px;

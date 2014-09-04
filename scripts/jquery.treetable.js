@@ -510,7 +510,6 @@
     loadBranch: function(node, rows) {
       var settings = this.data("treetable").settings,
           tree = this.data("treetable").tree;
-
       // TODO Switch to $.parseHTML
       rows = $(rows);
 
