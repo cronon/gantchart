@@ -3,9 +3,10 @@ $(function(){
         .treetable({ 
             column: 1,
             expandable: true,
-            onNodeExpand: function() {
-              console.log(this);
-              window.rootNode = this
+            onNodeCollapse: function(){
+              this.children.forEach(function(child){
+                child.row[0].classList.remove("selected");
+              })
             }
         })
         .resizableColumns()
@@ -17,10 +18,16 @@ $(function(){
     $("#tasks th:eq(4)").css("width","11%");
     $("#tasks th:eq(5)").css("width","6.6%");
 
-    $("#tasks td:first-child").on('click', function(e){
-      window.ev = e;
-      $(e.target.parentNode).toggleClass("selected");
-    });
+    var selectOnClick = function(e){
+      if($(e.target.parentNode).hasClass("selected")){
+        $(".selected").toggleClass("selected");  
+      } else {
+        $(".selected").toggleClass("selected"); 
+        $(e.target.parentNode).addClass("selected");
+      }
+      
+    }
+    $("#tasks").on('click', "td:first-child", selectOnClick);
 
     window.tasksTable = (function(){
       var getSelectedRow = function(){
@@ -30,7 +37,7 @@ $(function(){
       var getId = (function(){
         var lastId = 3;
         return function(){
-          lastId +=1;
+          lastId += 1;
           return lastId;
         }
       })()
@@ -41,12 +48,23 @@ $(function(){
           "<td></td><td>New task</td><td></td><td></td><td></td><td></td>"
       }
 
+      var appendChild = function(parent){
+        $("#tasks")
+          .treetable("loadBranch", parentNode, newRow(parent))
+          .editableTableWidget()
+      }
+
       return {
         insertRow: function(){
           var selected = getSelectedRow();
-          var node = $("#tasks").treetable("node", selected.data().ttId);
-          var parentNode = node.parentNode();
-          $("#tasks").treetable("loadBranch", parentNode, newRow(parentNode));
+          var parentNode = selected.length == 0 ? null : $("#tasks").treetable("node", selected.data().ttId).parentNode();
+          appendChild(parentNode);
+        },
+
+        insertChild: function(){
+          var selected = getSelectedRow();
+          var node = selected.length == 0 ? null : $("#tasks").treetable("node", selected.data().ttId);
+          appendChild(node);
         }
       }
     })()
