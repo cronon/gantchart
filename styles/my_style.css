@@ -15,7 +15,7 @@
   counter-reset: row;
   table-layout: fixed;
 }
-#tasks > tbody > tr > td {
+#tasks td, #tasks th {
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

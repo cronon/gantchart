@@ -17,6 +17,7 @@ $(function(){
     $("#tasks th:eq(3)").css("width","13.2%");
     $("#tasks th:eq(4)").css("width","11%");
     $("#tasks th:eq(5)").css("width","6.6%");
+    $(".rc-handle:first-child").trigger("mousedown").trigger("mouseup")
 
     var selectOnClick = function(e){
       if($(e.target.parentNode).hasClass("selected")){
