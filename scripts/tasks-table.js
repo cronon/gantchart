@@ -51,7 +51,7 @@ $(function(){
 
       var appendChild = function(parent){
         $("#tasks")
-          .treetable("loadBranch", parentNode, newRow(parent))
+          .treetable("loadBranch", parent, newRow(parent))
           .editableTableWidget()
       }
 
@@ -66,6 +66,13 @@ $(function(){
           var selected = getSelectedRow();
           var node = selected.length == 0 ? null : $("#tasks").treetable("node", selected.data().ttId);
           appendChild(node);
+        },
+
+        removeRow: function(){
+          var selected = getSelectedRow();
+          if(selected.length) {
+            $("#tasks").treetable("removeNode", selected.data().ttId);
+          }
         }
       }
     })()

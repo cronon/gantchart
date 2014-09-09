@@ -21,6 +21,7 @@
     <script type="text/javascript" src="scripts/jquery.treetable.js"></script>
 
     <script type="text/javascript" src="scripts/tasks-table.js"></script>
+    <link rel="stylesheet" href="styles/task-table.css" />
     <script type="text/javascript" src="utilities/date-interval.js"></script>
     <script type="text/javascript" src="utilities/day-info.js"></script>
     <script type="text/javascript" src="utilities/work-interval.js"></script>
@@ -31,6 +32,9 @@
   <body>
     <div class="row">
       <div class="col">
+        <button onclick="tasksTable.insertChild()"class="btn btn-plus">Insert child</button>
+        <button onclick="tasksTable.insertRow()"class="btn btn-plus">Add task</button>
+        <button onclick="tasksTable.removeRow()"class="btn btn-minus">Remove task</button>
         <table id="tasks" class="draggable">
           <thead>
             <th></th>
