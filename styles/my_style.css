@@ -13,8 +13,8 @@
 }
 
 .gantChart {
-    height:  90vh;
-    border: double grey;
+  height:  90vh;
+  border: double grey;
 	overflow-x:scroll;
 }
 .gantChartArea{

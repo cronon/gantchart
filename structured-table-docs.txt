@@ -1,0 +1,20 @@
+Зависимости
+  http://jquery.org
+  jQuery
+
+  http://danvk.org/dragtable/
+  dragtable
+
+  mindmup-editabletable.js - кастомный скрипт, не выделяет первую колонку и первую строку
+
+  http://dobtco.github.io/jquery-resizable-columns/
+  jquery.resizableColumns
+
+  http://ludo.cubicphuse.nl/jquery-treetable
+  jquery.treetable
+
+Итак
+наша jquery.structuredTable вешается на таблицу, оформленную как jquery.treetable и все связывание данных работает с методами jquery.treetable, ибо айдишники следует указывать прямо в разметке. Следовательно, structuredTable просто навешивает гору плагинов на таблицу и позволяет выделять строки. Единственный метод - getSelectedRow();
+Выглядит не очень, таковым и является: никакой инкапсуляции, потому и будет работать такое:
+  $("table").structuredTable();
+  $("table").treetable("remove", 11)
