@@ -14,7 +14,35 @@
   jquery.treetable
 
 Итак
-наша jquery.structuredTable вешается на таблицу, оформленную как jquery.treetable и все связывание данных работает с методами jquery.treetable, ибо айдишники следует указывать прямо в разметке. Следовательно, structuredTable просто навешивает гору плагинов на таблицу и позволяет выделять строки. Единственный метод - getSelectedRow();
-Выглядит не очень, таковым и является: никакой инкапсуляции, потому и будет работать такое:
-  $("table").structuredTable();
-  $("table").treetable("remove", 11)
+наша jquery.structuredTable вешается на таблицу, в параметрах следует указать массив объектов, с которым таблица будет связываться. 
+Каждый объект должен обладать методом isValid
+Внутри будет примерно такая штука:
+  // validate -- custom event, provided by mindmup-editabletable
+  $("td").on('validate', function(e, newValue){
+    var m = findModel(e.target)
+    var f = findField(e.target)
+    var m1 = m.clone();
+    m1[f] = newValue;
+    if(m1.isValid()){
+      m[f] = newValue;
+      return true;
+    } else {
+      return false;
+    }
+  })
+
+Снаружи же:
+  var dataScheme = {
+    "name": "Task name",  //argued
+    "duration": "Duration"
+  };
+  var rows = [
+    {
+      name: "learn angualr",
+      duration: "13 days",
+      isValid: function(){
+        return duration != "13 days" ? true : false
+      }
+    }
+  ]
+  $('table').structuredTable(dataScheme, rows);
