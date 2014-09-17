@@ -16,20 +16,8 @@
 Итак
 наша jquery.structuredTable вешается на таблицу, в параметрах следует указать массив объектов, с которым таблица будет связываться. 
 Каждый объект должен обладать методом isValid, уникальным полем id и опциональным полем parentId
-Внутри будет примерно такая штука:
-  // validate -- custom event, provided by mindmup-editabletable
-  $("td").on('validate', function(e, newValue){
-    var m = findModel(e.target)
-    var f = findField(e.target)
-    var m1 = m.clone();
-    m1[f] = newValue;
-    if(m1.isValid()){
-      m[f] = newValue;
-      return true;
-    } else {
-      return false;
-    }
-  })
+Массив rows тоже не простой. Добавлять и убирать элементы из него - только через методы, чтобы они дернули нашу таблицу.
+Также и с кождым отдельным row.
 
 Снаружи же:
   var dataScheme = {
