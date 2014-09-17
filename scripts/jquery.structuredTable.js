@@ -9,6 +9,63 @@ $(function(){
       "predecessors": "Predecessors"
     };
 
+    var RowsFactory = function(){
+      var rows = [];
+
+      var findRow = function(id){
+        var result = null;
+        rows.every(function(row){
+          if(row.id == id){
+            result = row;
+            return false;
+          } else {
+            return true;
+          }
+        });
+        if(result === null){
+          throw new Error("row with id:" + id + "cannot be found");
+        }
+        return result;
+      }
+
+      var changeRow = function(id, attr, value){
+        var row = findRow(id);
+        if(true){ // validation here
+          $(self).trigger('rowChanged', id, attr, value)
+          row[attr] = value;
+          return value;
+        } else {
+          return false;
+        }
+      }
+
+      var self = function(id, attr, value){
+        if(arguments.length == 1){
+          return findRow(id);
+        } else if (arguments.length == 2) {
+          return findRow(id)[attr];
+        } else if (arguments.length == 3){
+          return changeRow(id, attr, value); // it will notify table
+        }
+      }
+
+      var getId = (function(){
+        var lastId = 0;
+        return function(){
+          lastId += 1;
+          return lastId;
+        }
+      })();
+
+      self.appendChild = function(id){
+        var newRow = {};
+        newRow.parentId = id;
+        newRow.id = getId();
+        $(self).trigger('childAppended', id)
+      }
+      
+      return self;
+    }
     var rows = [
       {
         id: 1,

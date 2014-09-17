@@ -15,32 +15,22 @@
 
 Итак
 наша jquery.structuredTable вешается на таблицу, в параметрах следует указать массив объектов, с которым таблица будет связываться. 
-Каждый объект должен обладать методом isValid, уникальным полем id и опциональным полем parentId
-Массив rows тоже не простой. Добавлять и убирать элементы из него - только через методы, чтобы они дернули нашу таблицу.
-Также и с кождым отдельным row.
+Каждый объект должен обладать уникальным полем id и опциональным полем parentId
+Rows - функция, а доступ к элементам через айди. Добавлять и убирать элементы из него - только через методы, чтобы они дернули нашу таблицу.
+Rows(1) -> some row, Rows(1, 'id') -> 1, 
+Rows(1, 'name, 'foo') -> Returns false if such name isnt allowed. If all is OK will notify observers with id, attribute and new value
+Rows.appendChild(1) -> appends an empty child to the first row, automatically creates new id and notify observers.
+Rows.appendChild() -> appends an empty child to the root
 
-Снаружи же:
+structured table и все, кто захочет подписаться на изменения Rows, слушают такие события:
+
+    $(Rows).on('rowChanged', function(e, id, attr, value){})
+    $(Rows).on('childAppended', function(e, parentId){})
+
+
   var dataScheme = {
     "name": "Task name",  //argued
     "duration": "Duration"
   };
-  var rows = [
-    {
-      id: 1,
-      name: "learn angualr",
-      duration: "13 days",
-      isValid: function(){
-        return duration != "13 days" ? true : false
-      }
-    },
-    {
-      id: 2,
-      parentId: 1,
-      name: "learn directives",
-      duration: "1 day",
-      isValid: function(){
-        return !!(Math.floor(Math.random() * 1000) % 10)
-      }
-    }
-  ]
+
   $('table').structuredTable(dataScheme, rows);
