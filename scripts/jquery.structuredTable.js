@@ -27,12 +27,12 @@ $(function(){
         name: "learn directives",
         duration: "1 day",
         isValid: function(){
-          var r = !!(Math.floor(Math.random() * 1000) % 2)
-          console.log(r)
-          return r
+          return !!(Math.floor(Math.random() * 1000) % 2)
         }
       }
-    ]
+    ];
+
+    window.Rows = rows;
 
     $("#tasks").structuredTable(dataScheme, rows);
 
@@ -93,12 +93,24 @@ console.log(1);
     var parentId = row.parentId;
     var id = row.id;
 
-    var result = "<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">";
+    var result = $("<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">");
     Object.keys(scheme).forEach(function(key){
       var value = row.hasOwnProperty(key) ? row[key] : '';
-      result += '<td>' + value + '</td>';
+
+      var td = $('<td>' + value + '</td>');
+      td.on('validate', function(e, newValue){
+        var tempRow = $.extend({}, row);
+        tempRow[key] = newValue;
+        if(tempRow.isValid()){
+          row[key] = newValue;
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      result.append(td);
     })
-    result += '</tr>';
     return  result;
   }
 
@@ -115,6 +127,10 @@ console.log(1);
     return result;
   }
 
+  var findField = function(td, dataScheme){
+
+  }
+
   var methods = {
     init: function(dataScheme, rows){
       this.append(newTHead(dataScheme));
@@ -122,11 +138,7 @@ console.log(1);
 
       for(var key in rows){
         var row = rows[key];
-        var tr = $(newTr(dataScheme, row))
-        tr.on('validate', function(e, newValue){
-          var tempRow = $.extend({}, row);
-          return tempRow.isValid();
-        });
+        var tr = newTr(dataScheme, row)
         this.find("tbody").append(tr)
       };
 
