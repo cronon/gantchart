@@ -8,6 +8,7 @@ $(function(){
       "end": "End",
       "predecessors": "Predecessors"
     };
+
     var rows = [
       {
         id: 1,
@@ -17,7 +18,18 @@ $(function(){
         end: "in 13 days",
         predecessors: 2,
         isValid: function(){
-          return duration != "13 days" ? true : false
+          return this.duration != "13 days" ? true : false
+        }
+      },
+      {
+        id: 2,
+        parentId: 1,
+        name: "learn directives",
+        duration: "1 day",
+        isValid: function(){
+          var r = !!(Math.floor(Math.random() * 1000) % 2)
+          console.log(r)
+          return r
         }
       }
     ]
@@ -77,30 +89,21 @@ console.log(1);
 
 (function($){
 
-  var getId = (function(){
-    var lastId = 3;
-    return function(){
-      lastId += 1;
-      return lastId;
-    }
-  })()
-
-  var newRow = function(row, parentNode){
-    var parentId = (parentNode || {id:""}).id;
-    var id = getId();
+  var newTr = function(scheme, row){
+    var parentId = row.parentId;
+    var id = row.id;
 
     var result = "<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">";
-    for(key in JSON.parse(JSON.stringify(row))){
-      result += '<td>' + row[key] + '</td>';
-    }
+    Object.keys(scheme).forEach(function(key){
+      var value = row.hasOwnProperty(key) ? row[key] : '';
+      result += '<td>' + value + '</td>';
+    })
     result += '</tr>';
     return  result;
   }
 
   var appendChild = function(row, parent){
-    this
-      .treetable("loadBranch", parent, row)
-      .editableTableWidget()
+    this.find("tbody").append(row)
   }
 
   var newTHead = function(dataScheme){
@@ -115,10 +118,21 @@ console.log(1);
   var methods = {
     init: function(dataScheme, rows){
       this.append(newTHead(dataScheme));
+      this.append("<tbody></tbody>");
+
+      for(var key in rows){
+        var row = rows[key];
+        var tr = $(newTr(dataScheme, row))
+        tr.on('validate', function(e, newValue){
+          var tempRow = $.extend({}, row);
+          return tempRow.isValid();
+        });
+        this.find("tbody").append(tr)
+      };
 
       dragtable.makeDraggable(this[0]);
       this.treetable({ 
-            column: 1,
+            column: 1, // need to be a variable
             expandable: true,
             onNodeCollapse: function(){
               this.children.forEach(function(child){
@@ -128,10 +142,6 @@ console.log(1);
         })
         .resizableColumns()
         .editableTableWidget()
-
-      for(var key in rows){
-        appendChild.call(this, newRow(rows[key]), null)
-      };
 
       this.find("th:first-child").css("width","15px");
       $(".rc-handle:first-child").trigger("mousedown").trigger("mouseup")
