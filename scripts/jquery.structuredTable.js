@@ -1,5 +1,24 @@
 $(function(){
-    $("#tasks").structuredTable();
+
+    var dataScheme = {
+      "name": "Task name",  //argued
+      "duration": "Duration"
+    };
+    var rows = [
+      {
+        id: 1,
+        name: "learn angualr",
+        duration: "13 days",
+        start: "today",
+        end: "in 13 days",
+        predecessors: 2,
+        isValid: function(){
+          return duration != "13 days" ? true : false
+        }
+      }
+    ]
+
+    $("#tasks").structuredTable(dataScheme, rows);
 
     window.tasksTable = (function(){
       var getSelectedRow = function(){
@@ -54,8 +73,34 @@ console.log(1);
 
 (function($){
 
+  var getId = (function(){
+    var lastId = 3;
+    return function(){
+      lastId += 1;
+      return lastId;
+    }
+  })()
+
+  var newRow = function(row, parentNode){
+    var parentId = (parentNode || {id:""}).id;
+    var id = getId();
+
+    var result = "<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">";
+    for(key in JSON.parse(JSON.stringify(row))){
+      result += '<td>' + row[key] + '</td>';
+    }
+    result += '</tr>';
+    return  result;
+  }
+
+  var appendChild = function(row, parent){
+    this
+      .treetable("loadBranch", parent, row)
+      .editableTableWidget()
+  }
+
   var methods = {
-    init: function(){
+    init: function(dataScheme, rows){
       dragtable.makeDraggable(this[0])
       this.treetable({ 
             column: 1,
@@ -68,6 +113,10 @@ console.log(1);
         })
         .resizableColumns()
         .editableTableWidget()
+
+      for(var key in rows){
+        appendChild.call(this, newRow(rows[key]), null)
+      };
 
       this.find("th:first-child").css("width","15px");
       $(".rc-handle:first-child").trigger("mousedown").trigger("mouseup")
@@ -82,9 +131,9 @@ console.log(1);
       }
 
       this.on('click', "td:first-child", selectOnClick);
-    },
+    }
 
-    getSelectedRow: function(){
+    ,getSelectedRow: function(){
       return this.find('.st-selected');
     }
 
