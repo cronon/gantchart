@@ -1,8 +1,12 @@
 $(function(){
 
     var dataScheme = {
+      "id": "",
       "name": "Task name",  //argued
-      "duration": "Duration"
+      "duration": "Duration",
+      "start": "Start",
+      "end": "End",
+      "predecessors": "Predecessors"
     };
     var rows = [
       {
@@ -99,9 +103,20 @@ console.log(1);
       .editableTableWidget()
   }
 
+  var newTHead = function(dataScheme){
+    var result = "<thead>";
+    for(k in dataScheme){
+      result += '<th>' + dataScheme[k] + '</th>';
+    }
+    result += '</thead>';
+    return result;
+  }
+
   var methods = {
     init: function(dataScheme, rows){
-      dragtable.makeDraggable(this[0])
+      this.append(newTHead(dataScheme));
+
+      dragtable.makeDraggable(this[0]);
       this.treetable({ 
             column: 1,
             expandable: true,
