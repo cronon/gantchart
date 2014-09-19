@@ -30,8 +30,8 @@ $(function(){
 
       var changeRow = function(id, attr, value){
         var row = findRow(id);
-        if(true){ // validation here
-          $(self).trigger('rowChanged', id, attr, value)
+        if( (Math.floor(Math.random() * 10)) % 2 ){ // validation here
+          $(document).trigger('rowChanged', id, attr, value)
           row[attr] = value;
           return value;
         } else {
@@ -40,6 +40,7 @@ $(function(){
       }
 
       var self = function(id, attr, value){
+        console.log(id, attr, value);
         if(arguments.length == 1){
           return findRow(id);
         } else if (arguments.length == 2) {
@@ -98,7 +99,7 @@ $(function(){
     rows.forEach(function(row){
       Rows.appendChild(row.parentId, row)
     })
-    $("#tasks").structuredTable(dataScheme, window.Rows.getRows());
+    $("#tasks").structuredTable(dataScheme, window.Rows);
 
     window.tasksTable = (function(){
       var getSelectedRow = function(){
@@ -152,6 +153,7 @@ $(function(){
 console.log(1);
 
 (function($){
+  "use strict";
 
   var newTr = function(scheme, row){
     var parentId = row.parentId;
@@ -163,14 +165,7 @@ console.log(1);
 
       var td = $('<td>' + value + '</td>');
       td.on('validate', function(e, newValue){
-        var tempRow = $.extend({}, row);
-        tempRow[key] = newValue;
-        if(tempRow.isValid()){
-          row[key] = newValue;
-          return true;
-        } else {
-          return false;
-        }
+        return Rows(id, key, newValue);
       });
 
       result.append(td);
@@ -184,7 +179,7 @@ console.log(1);
 
   var newTHead = function(dataScheme){
     var result = "<thead>";
-    for(k in dataScheme){
+    for(var k in dataScheme){
       result += '<th>' + dataScheme[k] + '</th>';
     }
     result += '</thead>';
@@ -194,17 +189,19 @@ console.log(1);
   var findField = function(td, dataScheme){
 
   }
-
+  var Rows;
   var methods = {
-    init: function(dataScheme, rows){
+    init: function(dataScheme, RowsModel){
+      Rows = RowsModel;
+
       this.append(newTHead(dataScheme));
       this.append("<tbody></tbody>");
 
-      for(var key in rows){
-        var row = rows[key];
+      self = this;
+      Rows.getRows().forEach(function(row){
         var tr = newTr(dataScheme, row)
-        this.find("tbody").append(tr)
-      };
+        self.find("tbody").append(tr)
+      });
 
       dragtable.makeDraggable(this[0]);
       this.treetable({ 

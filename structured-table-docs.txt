@@ -13,9 +13,9 @@
   http://ludo.cubicphuse.nl/jquery-treetable
   jquery.treetable
 
-Итак
-наша jquery.structuredTable вешается на таблицу, в параметрах следует указать массив объектов, с которым таблица будет связываться. 
-Каждый объект должен обладать уникальным полем id и опциональным полем parentId
+
+
+Rows - это не то модель, не то ViewModel
 Rows - функция, а доступ к элементам через айди. Добавлять и убирать элементы из него - только через методы, чтобы они дернули нашу таблицу.
 Rows(1) -> some row, Rows(1, 'id') -> 1, 
 Rows(1, 'name, 'foo') -> Returns false if such name isnt allowed. If all is OK will notify observers with id, attribute and new value
@@ -28,10 +28,7 @@ structured table и все, кто захочет подписаться на и
     $(Rows).on('rowChanged', function(e, id, attr, value){})
     $(Rows).on('childAppended', function(e, parentId){})
 
-
-  var dataScheme = {
-    "name": "Task name",  //argued
-    "duration": "Duration"
-  };
-
+Итак
+наша jquery.structuredTable вешается на таблицу, в параметрах следует указать Rows, с которым таблица будет связываться. 
+В дальнейшем таблица будет слушать изменения Rows, и пользоваться его сеттерами
   $('table').structuredTable(dataScheme, rows);
