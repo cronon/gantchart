@@ -21,6 +21,7 @@ Rows(1) -> some row, Rows(1, 'id') -> 1,
 Rows(1, 'name, 'foo') -> Returns false if such name isnt allowed. If all is OK will notify observers with id, attribute and new value
 Rows.appendChild(1) -> appends an empty child to the first row, automatically creates new id and notify observers.
 Rows.appendChild() -> appends an empty child to the root
+Rows.appendChild(null, {name: "xxx", age: 33}) -> appends new row to the root with name and age fields
 
 structured table и все, кто захочет подписаться на изменения Rows, слушают такие события:
 

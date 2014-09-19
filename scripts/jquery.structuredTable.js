@@ -23,7 +23,7 @@ $(function(){
           }
         });
         if(result === null){
-          throw new Error("row with id:" + id + "cannot be found");
+          throw new Error("row with id: " + id + " cannot be found");
         }
         return result;
       }
@@ -57,18 +57,24 @@ $(function(){
         }
       })();
 
-      self.appendChild = function(id){
-        var newRow = {};
-        newRow.parentId = id;
-        newRow.id = getId();
-        $(self).trigger('childAppended', id)
+      self.appendChild = function(parentId, object){
+        var newRow = $.extend({}, object);
+        newRow.parentId = parentId;
+        var id = getId();
+        newRow.id = id;
+        rows.push(newRow);
+        $(document).trigger('childAppended', id);
+        return id;
       }
-      
+
+      self.getRows = function(){
+        return rows;
+      }
+
       return self;
     }
     var rows = [
       {
-        id: 1,
         name: "learn angualr",
         duration: "13 days",
         start: "today",
@@ -79,7 +85,6 @@ $(function(){
         }
       },
       {
-        id: 2,
         parentId: 1,
         name: "learn directives",
         duration: "1 day",
@@ -89,9 +94,11 @@ $(function(){
       }
     ];
 
-    window.Rows = rows;
-
-    $("#tasks").structuredTable(dataScheme, rows);
+    window.Rows = RowsFactory();
+    rows.forEach(function(row){
+      Rows.appendChild(row.parentId, row)
+    })
+    $("#tasks").structuredTable(dataScheme, window.Rows.getRows());
 
     window.tasksTable = (function(){
       var getSelectedRow = function(){
