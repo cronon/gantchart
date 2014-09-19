@@ -25,9 +25,9 @@ Rows.appendChild(null, {name: "xxx", age: 33}) -> appends new row to the root wi
 
 structured table и все, кто захочет подписаться на изменения Rows, слушают такие события:
 
-    $(Rows).on('rowChanged', function(e, id, attr, value){})
-    $(Rows).on('childAppended', function(e, parentId){})
-
+    $(document).on('rowChange', function(e, [id, attr, value]){})
+    $(document).on('childAppend', function(e, id){})
+    $(document).on('rowRemove', function(e, id){})
 Итак
 наша jquery.structuredTable вешается на таблицу, в параметрах следует указать Rows, с которым таблица будет связываться. 
 В дальнейшем таблица будет слушать изменения Rows, и пользоваться его сеттерами

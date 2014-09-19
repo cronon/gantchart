@@ -1,147 +1,100 @@
 $(function(){
+  "use strict";
+  var dataScheme = {
+    "id": "",
+    "name": "Task name",  //argued
+    "duration": "Duration",
+    "start": "Start",
+    "end": "End",
+    "predecessors": "Predecessors"
+  };
 
-    var dataScheme = {
-      "id": "",
-      "name": "Task name",  //argued
-      "duration": "Duration",
-      "start": "Start",
-      "end": "End",
-      "predecessors": "Predecessors"
-    };
+  var RowsFactory = function(){
+    var rows = [];
 
-    var RowsFactory = function(){
-      var rows = [];
-
-      var findRow = function(id){
-        var result = null;
-        rows.every(function(row){
-          if(row.id == id){
-            result = row;
-            return false;
-          } else {
-            return true;
-          }
-        });
-        if(result === null){
-          throw new Error("row with id: " + id + " cannot be found");
-        }
-        return result;
-      }
-
-      var changeRow = function(id, attr, value){
-        var row = findRow(id);
-        if( (Math.floor(Math.random() * 10)) % 2 ){ // validation here
-          $(document).trigger('rowChanged', [id, attr, value])
-          row[attr] = value;
-          return value;
-        } else {
+    var findRow = function(id){
+      var result = null;
+      rows.every(function(row){
+        if(row.id == id){
+          result = row;
           return false;
+        } else {
+          return true;
         }
+      });
+      if(result === null){
+        throw new Error("row with id: " + id + " cannot be found");
       }
-
-      var self = function(id, attr, value){
-        console.log(id, attr, value);
-        if(arguments.length == 1){
-          return findRow(id);
-        } else if (arguments.length == 2) {
-          return findRow(id)[attr];
-        } else if (arguments.length == 3){
-          return changeRow(id, attr, value); // it will notify table
-        }
-      }
-
-      var getId = (function(){
-        var lastId = 0;
-        return function(){
-          lastId += 1;
-          return lastId;
-        }
-      })();
-
-      self.appendChild = function(parentId, object){
-        var newRow = $.extend({}, object);
-        newRow.parentId = parentId;
-        var id = getId();
-        newRow.id = id;
-        rows.push(newRow);
-        $(document).trigger('childAppended', id);
-        return id;
-      }
-
-      self.getRows = function(){
-        return rows;
-      }
-
-      return self;
+      return result;
     }
-    var rows = [
-      {
-        name: "learn angualr",
-        duration: "13 days",
-        start: "today",
-        end: "in 13 days",
-        predecessors: 2
-      },
-      {
-        parentId: 1,
-        name: "learn directives",
-        duration: "1 day"
+
+    var changeRow = function(id, attr, value){
+      var row = findRow(id);
+      if( (Math.floor(Math.random() * 10)) % 2 ){ // validation here
+        $(document).trigger('rowChange', [id, attr, value])
+        row[attr] = value;
+        return value;
+      } else {
+        return false;
       }
-    ];
+    }
 
-    window.Rows = RowsFactory();
-    rows.forEach(function(row){
-      Rows.appendChild(row.parentId, row)
-    })
-    $("#tasks").structuredTable(dataScheme, window.Rows);
-
-    window.tasksTable = (function(){
-      var getSelectedRow = function(){
-        return $("#tasks").structuredTable("getSelectedRow")
+    var self = function(id, attr, value){
+      console.log(id, attr, value);
+      if(arguments.length == 1){
+        return findRow(id);
+      } else if (arguments.length == 2) {
+        return findRow(id)[attr];
+      } else if (arguments.length == 3){
+        return changeRow(id, attr, value); // it will notify table
       }
+    }
 
-      var getId = (function(){
-        var lastId = 3;
-        return function(){
-          lastId += 1;
-          return lastId;
-        }
-      })()
-
-      var newRow = function(parentNode){
-        var parentId = (parentNode || {id:""}).id;
-        var id = getId();
-        return "<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">" + 
-          "<td>"+id+"</td><td>New task</td><td></td><td></td><td></td><td></td>"
+    var getId = (function(){
+      var lastId = 0;
+      return function(){
+        lastId += 1;
+        return lastId;
       }
+    })();
 
-      var appendChild = function(parent){
-        $("#tasks")
-          .treetable("loadBranch", parent, newRow(parent))
-          .editableTableWidget()
-      }
+    self.appendChild = function(parentId, object){
+      var newRow = $.extend({}, object);
+      newRow.parentId = parentId;
+      var id = getId();
+      newRow.id = id;
+      rows.push(newRow);
+      $(document).trigger('childAppend', id);
+      return id;
+    }
 
-      return {
-        insertRow: function(){
-          var selected = getSelectedRow();
-          var parentNode = selected.length == 0 ? null : $("#tasks").treetable("node", selected.data().ttId).parentNode();
-          appendChild(parentNode);
-        },
+    self.getRows = function(){
+      return rows;
+    }
 
-        insertChild: function(){
-          var selected = getSelectedRow();
-          var node = selected.length == 0 ? null : $("#tasks").treetable("node", selected.data().ttId);
-          appendChild(node);
-        },
+    return self;
+  }
+  var rows = [
+    {
+      name: "learn angualr",
+      duration: "13 days",
+      start: "today",
+      end: "in 13 days",
+      predecessors: 2
+    },
+    {
+      parentId: 1,
+      name: "learn directives",
+      duration: "1 day"
+    }
+  ];
 
-        removeRow: function(){
-          var selected = getSelectedRow();
-          if(selected.length) {
-            $("#tasks").treetable("removeNode", selected.data().ttId);
-          }
-        }
-      }
-    })()
+  window.Rows = RowsFactory();
+  rows.forEach(function(row){
+    Rows.appendChild(row.parentId, row)
+  });
+  $("#tasks").structuredTable(dataScheme, window.Rows);
+
 })
 
 console.log(1);
@@ -167,8 +120,13 @@ console.log(1);
     return  result;
   }
 
-  var appendChild = function(row, parent){
-    this.find("tbody").append(row)
+  var childAppendHandler = function(dataScheme){
+    return function(e, id){
+      var row = Rows(id);
+      var parentNode =  row.parentId ? self.treetable("node", row.parentId) : null;
+      self.treetable("loadBranch", parentNode, newTr(dataScheme, row))
+        .editableTableWidget()
+    }
   }
 
   var newTHead = function(dataScheme){
@@ -187,19 +145,18 @@ console.log(1);
   var findTd = function(id, dataScheme, attr){
     var tr = self.find("tr[data-tt-id=" + id + "]");
     var index = Object.keys(dataScheme).indexOf(attr);
-    debugger;
     return $(tr.find("td")[index]);
   }
 
   var rowChangedHandler = function(dataScheme){
     return function(e, id, attr, value){
       var td = findTd(id, dataScheme, attr);
-      debugger;
       td.contents().filter(function() {
         return this.nodeType == 3;
       })[0].nodeValue = value;
     }
   }
+
   var Rows, self;
   var methods = {
     init: function(dataScheme, RowsModel){
@@ -214,7 +171,8 @@ console.log(1);
         self.find("tbody").append(tr)
       });
 
-      $(document).on('rowChanged', rowChangedHandler(dataScheme));
+      $(document).on('rowChange', rowChangedHandler(dataScheme));
+      $(document).on('childAppend', childAppendHandler(dataScheme));
       dragtable.makeDraggable(this[0]);
       this.treetable({ 
             column: 1, // need to be a variable
