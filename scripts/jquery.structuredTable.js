@@ -31,7 +31,7 @@ $(function(){
       var changeRow = function(id, attr, value){
         var row = findRow(id);
         if( (Math.floor(Math.random() * 10)) % 2 ){ // validation here
-          $(document).trigger('rowChanged', id, attr, value)
+          $(document).trigger('rowChanged', [id, attr, value])
           row[attr] = value;
           return value;
         } else {
@@ -80,18 +80,12 @@ $(function(){
         duration: "13 days",
         start: "today",
         end: "in 13 days",
-        predecessors: 2,
-        isValid: function(){
-          return this.duration != "13 days" ? true : false
-        }
+        predecessors: 2
       },
       {
         parentId: 1,
         name: "learn directives",
-        duration: "1 day",
-        isValid: function(){
-          return !!(Math.floor(Math.random() * 1000) % 2)
-        }
+        duration: "1 day"
       }
     ];
 
@@ -189,20 +183,38 @@ console.log(1);
   var findField = function(td, dataScheme){
 
   }
-  var Rows;
+
+  var findTd = function(id, dataScheme, attr){
+    var tr = self.find("tr[data-tt-id=" + id + "]");
+    var index = Object.keys(dataScheme).indexOf(attr);
+    debugger;
+    return $(tr.find("td")[index]);
+  }
+
+  var rowChangedHandler = function(dataScheme){
+    return function(e, id, attr, value){
+      var td = findTd(id, dataScheme, attr);
+      debugger;
+      td.contents().filter(function() {
+        return this.nodeType == 3;
+      })[0].nodeValue = value;
+    }
+  }
+  var Rows, self;
   var methods = {
     init: function(dataScheme, RowsModel){
       Rows = RowsModel;
+      self = this;
 
       this.append(newTHead(dataScheme));
       this.append("<tbody></tbody>");
 
-      self = this;
       Rows.getRows().forEach(function(row){
         var tr = newTr(dataScheme, row)
         self.find("tbody").append(tr)
       });
 
+      $(document).on('rowChanged', rowChangedHandler(dataScheme));
       dragtable.makeDraggable(this[0]);
       this.treetable({ 
             column: 1, // need to be a variable
