@@ -27,6 +27,6 @@ table.treetable span.indenter a {
   width: 19px;
 }
 /* leaf now cannot expanded */
-table.treetable tr.leaf span.indenter {
+table.treetable tr.leaf span.indenter > a{
   display: none;
 }
