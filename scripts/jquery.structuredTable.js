@@ -68,6 +68,27 @@ $(function(){
       return id;
     }
 
+    var getChildren = function(id){
+      return rows.filter(function(row){
+        return row.parentId == id;
+      })  
+    }
+
+    var removeOneRow = function(id){
+      var row = self(id);
+      var index = rows.indexOf(row);
+      $(document).trigger('rowRemove', id);
+      return rows.splice(index, 1);
+    }
+
+    self.removeRow = function(id){
+      var children = getChildren(id);
+      children.forEach(function(child){
+        self.removeRow(child.id);
+      });
+      return removeOneRow(id);
+    }
+
     self.getRows = function(){
       return rows;
     }
@@ -120,15 +141,6 @@ console.log(1);
     return  result;
   }
 
-  var childAppendHandler = function(dataScheme){
-    return function(e, id){
-      var row = Rows(id);
-      var parentNode =  row.parentId ? self.treetable("node", row.parentId) : null;
-      self.treetable("loadBranch", parentNode, newTr(dataScheme, row))
-        .editableTableWidget()
-    }
-  }
-
   var newTHead = function(dataScheme){
     var result = "<thead>";
     for(var k in dataScheme){
@@ -148,12 +160,35 @@ console.log(1);
     return $(tr.find("td")[index]);
   }
 
-  var rowChangedHandler = function(dataScheme){
+  var childAppendHandler = function(dataScheme){
+    return function(e, id){
+      var row = Rows(id);
+      var parentNode =  row.parentId ? self.treetable("node", row.parentId) : null;
+      self.treetable("loadBranch", parentNode, newTr(dataScheme, row))
+        .editableTableWidget()
+    }
+  }
+
+  var rowChangeHandler = function(dataScheme){
     return function(e, id, attr, value){
       var td = findTd(id, dataScheme, attr);
       td.contents().filter(function() {
         return this.nodeType == 3;
       })[0].nodeValue = value;
+    }
+  }
+
+  var isOnlyChild = function(node){
+    var parent = node.parentNode() || {children: false};
+    return !!parent.children;
+  }
+  var rowRemoveHandler = function(e, id){
+    var node = self.treetable("node", id);
+    self.treetable("unloadBranch", node);
+    if(isOnlyChild(node)){
+      self.treetable("unloadBranch", node.parentNode());
+    } else {
+      self.treetable("removeNode", id);
     }
   }
 
@@ -171,8 +206,10 @@ console.log(1);
         self.find("tbody").append(tr)
       });
 
-      $(document).on('rowChange', rowChangedHandler(dataScheme));
+      $(document).on('rowChange', rowChangeHandler(dataScheme));
       $(document).on('childAppend', childAppendHandler(dataScheme));
+      $(document).on('rowRemove', rowRemoveHandler);
+
       dragtable.makeDraggable(this[0]);
       this.treetable({ 
             column: 1, // need to be a variable
