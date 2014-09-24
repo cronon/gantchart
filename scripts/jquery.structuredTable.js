@@ -114,7 +114,7 @@ $(function(){
   rows.forEach(function(row){
     Rows.appendChild(row.parentId, row)
   });
-  $("#tasks").structuredTable(dataScheme, window.Rows);
+  $("#tasks").structuredTable(dataScheme, window.Rows, 1);
 
 })
 
@@ -192,50 +192,61 @@ console.log(1);
     }
   }
 
+  var columnMoveHandler = function(dataScheme, expandableColumn){
+    return function(e){
+      self.children().remove();
+      makeDOM(dataScheme, Rows, expandableColumn);
+    }
+  }
+
+  var selectOnClick = function(e){
+    if($(e.target.parentNode).hasClass("st-selected")){
+      $(".st-selected").toggleClass("st-selected");  
+    } else {
+      $(".st-selected").toggleClass("st-selected"); 
+      $(e.target.parentNode).addClass("st-selected");
+    }      
+  }
+
+  var makeDOM = function(dataScheme, RowsModel, expandableColumn){
+    self.append(newTHead(dataScheme));
+    self.append("<tbody></tbody>");
+
+    Rows.getRows().forEach(function(row){
+      var tr = newTr(dataScheme, row)
+      self.find("tbody").append(tr)
+    });
+
+    dragtable.makeDraggable(self[0]);
+    self.treetable({ 
+          column: expandableColumn,
+          expandable: true,
+          onNodeCollapse: function(){
+            this.children.forEach(function(child){
+              child.row[0].classList.remove("st-selected");
+            })
+          }
+      })
+      .resizableColumns()
+      .editableTableWidget()
+  }
   var Rows, self;
   var methods = {
-    init: function(dataScheme, RowsModel){
+    init: function(dataScheme, RowsModel, expandableColumn){
       Rows = RowsModel;
       self = this;
 
-      this.append(newTHead(dataScheme));
-      this.append("<tbody></tbody>");
-
-      Rows.getRows().forEach(function(row){
-        var tr = newTr(dataScheme, row)
-        self.find("tbody").append(tr)
-      });
+      makeDOM(dataScheme, RowsModel, expandableColumn);
 
       $(document).on('rowChange', rowChangeHandler(dataScheme));
       $(document).on('childAppend', childAppendHandler(dataScheme));
       $(document).on('rowRemove', rowRemoveHandler);
-
-      dragtable.makeDraggable(this[0]);
-      this.treetable({ 
-            column: 1, // need to be a variable
-            expandable: true,
-            onNodeCollapse: function(){
-              this.children.forEach(function(child){
-                child.row[0].classList.remove("st-selected");
-              })
-            }
-        })
-        .resizableColumns()
-        .editableTableWidget()
+      $(document).on('dt-columnmove', columnMoveHandler(dataScheme, expandableColumn))
+      this.on('click', "td:first-child", selectOnClick);
 
       this.find("th:first-child").css("width","15px");
       $(".rc-handle:first-child").trigger("mousedown").trigger("mouseup")
 
-      var selectOnClick = function(e){
-        if($(e.target.parentNode).hasClass("st-selected")){
-          $(".st-selected").toggleClass("st-selected");  
-        } else {
-          $(".st-selected").toggleClass("st-selected"); 
-          $(e.target.parentNode).addClass("st-selected");
-        }      
-      }
-
-      this.on('click', "td:first-child", selectOnClick);
     }
 
     ,getSelectedRow: function(){
