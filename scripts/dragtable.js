@@ -309,6 +309,8 @@ var dragtable = {
           dragObj.table.className.search(/\bforget-ordering\b/) == -1) {
         dragtable.rememberDrag(dragObj.table.id, dragObj.startCol, targetCol);
       }
+      var e = new CustomEvent('dt-columnmove', {detail: {was: dragObj.startCol, became: targetCol}});
+      document.dispatchEvent(e);
     }
   },
 
@@ -316,9 +318,7 @@ var dragtable = {
   findColumn: function(table, x) {
     var header = table.tHead.rows[0].cells;
     for (var i = 0; i < header.length; i++) {
-      //var left = header[i].offsetLeft;
       var pos = dragtable.absolutePosition(header[i]);
-      //if (left <= x && x <= left + header[i].offsetWidth) {
       if (pos.x <= x && x <= pos.x + header[i].offsetWidth) {
         return i;
       }
@@ -330,8 +330,6 @@ var dragtable = {
   // Based on the "Swapping table columns" discussion on comp.lang.javascript.
   // Assumes there are columns at sIdx and fIdx
   moveColumn: function(table, sIdx, fIdx) {
-    var e = new CustomEvent('dt-columnmove', {detail: {was: sIdx, became: fIdx}});
-    document.dispatchEvent(e);
     var row, cA;
     var i=table.rows.length;
     while (i--){

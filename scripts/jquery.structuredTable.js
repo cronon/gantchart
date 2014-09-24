@@ -199,8 +199,16 @@ console.log(1);
     }
   }
 
-  var columnMoveHandler = function(dataScheme){
+  var columnMoveHandler = function(){
     return function(e){
+      console.log(dataScheme.map(function(c){
+        return c.field;
+      }));
+      // debugger;
+      var was = e.originalEvent.detail.was;
+      var became = e.originalEvent.detail.became;
+      var replaced = dataScheme.splice(was, 1)[0];
+      dataScheme.splice(became, 0, replaced);
       self.children().remove();
       makeDOM(dataScheme, Rows);
     }
@@ -237,11 +245,12 @@ console.log(1);
       .resizableColumns()
       .editableTableWidget()
   }
-  var Rows, self;
+  var Rows, self, dataScheme;
   var methods = {
-    init: function(dataScheme, RowsModel){
+    init: function(_dataScheme, RowsModel){
       Rows = RowsModel;
       self = this;
+      dataScheme = _dataScheme;
 
       makeDOM(dataScheme, RowsModel);
 
@@ -251,7 +260,7 @@ console.log(1);
       $(document).on('dt-columnmove', columnMoveHandler(dataScheme))
       this.on('click', "td:first-child", selectOnClick);
 
-      this.find("th:first-child").css("width","15px");
+      //this.find("th:first-child").css("width","15px");
       $(".rc-handle:first-child").trigger("mousedown").trigger("mouseup")
 
     }
