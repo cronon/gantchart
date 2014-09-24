@@ -32,5 +32,10 @@ structured table и все, кто захочет подписаться на и
 наша jquery.structuredTable вешается на таблицу, в параметрах следует указать Rows, с которым таблица будет связываться. 
 В дальнейшем таблица будет слушать изменения Rows, и пользоваться его сеттерами
   $('table').structuredTable(dataScheme, rows);
-dataScheme - массив объектов вида [{fieldName: columnName}, {filed2: coulmn2} ... ],
+dataScheme - массив объектов вида 
+[
+  {field: "id", column: ""}, 
+  {field: "name", column: "Task name"},
+  ... 
+]
   а еще у него есть поле dataScheme.expandableColumn - номер колонки в которой могут раскрываться строки

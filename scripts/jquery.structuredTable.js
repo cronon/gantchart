@@ -1,13 +1,20 @@
 $(function(){
   "use strict";
-  var dataScheme = {
-    "id": "",
-    "name": "Task name",  //argued
-    "duration": "Duration",
-    "start": "Start",
-    "end": "End",
-    "predecessors": "Predecessors"
-  };
+  var colDefinition = function(field, column){
+    return {
+      "field": field,
+      "column": column
+    }
+  }
+  var dataScheme = [
+    colDefinition("id", ""),
+    colDefinition("name", "Task name"), 
+    colDefinition("duration", "Duration"),
+    colDefinition("start", "Start"),
+    colDefinition("end", "End"),
+    colDefinition("predecessors", "Predecessors")
+  ];
+  dataScheme.expandableColumn = 1;
 
   var RowsFactory = function(){
     var rows = [];
@@ -128,7 +135,9 @@ console.log(1);
     var id = row.id;
 
     var result = $("<tr data-tt-id=\""+id+"\" data-tt-parent-id=\""+ parentId + "\">");
-    Object.keys(scheme).forEach(function(key){
+    scheme.map(function(c){
+      return c.field;
+    }).forEach(function(key){
       var value = row.hasOwnProperty(key) ? row[key] : '';
 
       var td = $('<td>' + value + '</td>');
@@ -143,20 +152,18 @@ console.log(1);
 
   var newTHead = function(dataScheme){
     var result = "<thead>";
-    for(var k in dataScheme){
-      result += '<th>' + dataScheme[k] + '</th>';
-    }
+    dataScheme.forEach(function(col){
+      result += '<th>' + col.column + '</th>';
+    });
     result += '</thead>';
     return result;
   }
 
-  var findField = function(td, dataScheme){
-
-  }
-
   var findTd = function(id, dataScheme, attr){
     var tr = self.find("tr[data-tt-id=" + id + "]");
-    var index = Object.keys(dataScheme).indexOf(attr);
+  var index = dataScheme.map(function(c){
+              return c.field;
+            }).indexOf(attr);
     return $(tr.find("td")[index]);
   }
 
@@ -192,10 +199,10 @@ console.log(1);
     }
   }
 
-  var columnMoveHandler = function(dataScheme, expandableColumn){
+  var columnMoveHandler = function(dataScheme){
     return function(e){
       self.children().remove();
-      makeDOM(dataScheme, Rows, expandableColumn);
+      makeDOM(dataScheme, Rows);
     }
   }
 
@@ -208,7 +215,7 @@ console.log(1);
     }      
   }
 
-  var makeDOM = function(dataScheme, RowsModel, expandableColumn){
+  var makeDOM = function(dataScheme, RowsModel){
     self.append(newTHead(dataScheme));
     self.append("<tbody></tbody>");
 
@@ -219,7 +226,7 @@ console.log(1);
 
     dragtable.makeDraggable(self[0]);
     self.treetable({ 
-          column: expandableColumn,
+          column: dataScheme.expandableColumn,
           expandable: true,
           onNodeCollapse: function(){
             this.children.forEach(function(child){
@@ -232,16 +239,16 @@ console.log(1);
   }
   var Rows, self;
   var methods = {
-    init: function(dataScheme, RowsModel, expandableColumn){
+    init: function(dataScheme, RowsModel){
       Rows = RowsModel;
       self = this;
 
-      makeDOM(dataScheme, RowsModel, expandableColumn);
+      makeDOM(dataScheme, RowsModel);
 
       $(document).on('rowChange', rowChangeHandler(dataScheme));
       $(document).on('childAppend', childAppendHandler(dataScheme));
       $(document).on('rowRemove', rowRemoveHandler);
-      $(document).on('dt-columnmove', columnMoveHandler(dataScheme, expandableColumn))
+      $(document).on('dt-columnmove', columnMoveHandler(dataScheme))
       this.on('click', "td:first-child", selectOnClick);
 
       this.find("th:first-child").css("width","15px");
