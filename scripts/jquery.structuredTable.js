@@ -1,14 +1,15 @@
 $(function(){
   "use strict";
-  var colDefinition = function(field, column){
+  var colDefinition = function(field, column, expandable){
     return {
       "field": field,
-      "column": column
+      "column": column,
+      "expandable": expandable || false
     }
   }
   var dataScheme = [
     colDefinition("id", ""),
-    colDefinition("name", "Task name"), 
+    colDefinition("name", "Task name", true), 
     colDefinition("duration", "Duration"),
     colDefinition("start", "Start"),
     colDefinition("end", "End"),
@@ -201,15 +202,16 @@ console.log(1);
 
   var columnMoveHandler = function(){
     return function(e){
-      console.log(dataScheme.map(function(c){
-        return c.field;
-      }));
-      // debugger;
       var was = e.originalEvent.detail.was;
       var became = e.originalEvent.detail.became;
       var replaced = dataScheme.splice(was, 1)[0];
       dataScheme.splice(became, 0, replaced);
-      self.children().remove();
+
+      var clone = self.removeChildren().clone();
+      var parent = self.parent();
+      self.remove();
+      parent.append(clone);
+      self = clone;
       makeDOM(dataScheme, Rows);
     }
   }
@@ -223,6 +225,16 @@ console.log(1);
     }      
   }
 
+  var getExpandableIndex = function(dataScheme){
+    // debugger;
+    return dataScheme.map(function(item, index){
+      if(item.expandable){
+        return true;
+      } else {
+        return false;
+      }
+    }).indexOf(true);
+  }
   var makeDOM = function(dataScheme, RowsModel){
     self.append(newTHead(dataScheme));
     self.append("<tbody></tbody>");
@@ -234,7 +246,7 @@ console.log(1);
 
     dragtable.makeDraggable(self[0]);
     self.treetable({ 
-          column: dataScheme.expandableColumn,
+          column: getExpandableIndex(dataScheme),
           expandable: true,
           onNodeCollapse: function(){
             this.children.forEach(function(child){

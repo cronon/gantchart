@@ -35,7 +35,7 @@ structured table и все, кто захочет подписаться на и
 dataScheme - массив объектов вида 
 [
   {field: "id", column: ""}, 
-  {field: "name", column: "Task name"},
+  {field: "name", column: "Task name", expandable: true},
   ... 
 ]
-  а еще у него есть поле dataScheme.expandableColumn - номер колонки в которой могут раскрываться строки
+ expandable: true - для колонки в которой могут раскрываться строки
