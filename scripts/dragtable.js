@@ -330,6 +330,8 @@ var dragtable = {
   // Based on the "Swapping table columns" discussion on comp.lang.javascript.
   // Assumes there are columns at sIdx and fIdx
   moveColumn: function(table, sIdx, fIdx) {
+    var e = new CustomEvent('dt-columnmove', {detail: {was: sIdx, became: fIdx}});
+    document.dispatchEvent(e);
     var row, cA;
     var i=table.rows.length;
     while (i--){
