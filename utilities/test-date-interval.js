@@ -1,19 +1,17 @@
 describe("Date Interval", function(){
-  var interval, begin, end;
+  var interval, start, end;
 
-    begin = new Date("2014-08-01T00:00+0400");
-    end = new Date("2014-08-01T12:00+0400");
-    interval = DateInterval(begin, end);
-    console.log(interval);
-
+  start = new Date("2014-08-01T00:00+0400");
+  end = new Date("2014-08-01T12:00+0400");
+  interval = DateInterval(start, end);
 
   it("creates correct", function(){
-    expect(interval.begin).toEqual(begin);
+    expect(interval.start).toEqual(start);
     expect(interval.end).toEqual(end);
   });
 
   it("'s fields are new objects", function(){
-    expect(interval.begin).not.toBe(begin);
+    expect(interval.start).not.toBe(start);
     expect(interval.end).not.toBe(end);
   })
 
@@ -33,21 +31,33 @@ describe("Date Interval", function(){
 
   describe("includeInterval", function(){
     it("returns true when it includes interval", function(){
-      console.log(interval);
       var otherInterval = DateInterval("2014-08-01T01:00+0400","2014-08-01T12:00+0400");
       var actual = interval.includeInterval(otherInterval);
       expect(actual).toEqual(true);
     });
 
     it("returns false when it doesn't include interval", function(){
-      console.log(interval);
       var otherInterval = DateInterval("2014-08-01T00:00+0400","2014-08-01T15:00+0400");
       var actual = interval.includeInterval(otherInterval);
       expect(actual).toEqual(false);
     });
   });
 
-  describe("isOverlap", function(){
+  describe("includeWeak", function(){
+    it("exist includeWeak", function(){
+      var dateOnBorderInterval = new Date("2014-08-01T00:00+0400");
+      var actual = interval.includeWeak(dateOnBorderInterval);
+      expect(actual).toEqual(true);
+    });
+  });
+
+  describe("duration", function(){
+    it("retruns duration between start and end", function(){
+      expect(interval.duration).toEqual(12*3600*1000);
+    })
+  })
+
+  xdescribe("isOverlap", function(){
     it("returns true when overlap", function(){
       var otherInterval = DateInterval("2014-08-01T00:00+0400","2014-08-01T15:00+0400");
       actual = interval.isOverlap(otherInterval);
@@ -69,7 +79,7 @@ describe("Date Interval", function(){
     it("returns false when doesn't overlap", function(){
       var otherInterval = DateInterval("2014-08-02T00:00+0400","2014-08-02T15:00+0400");
       actual = interval.isOverlap(otherInterval);
-      expect(actual).toEqual(false):
+      expect(actual).toEqual(false);
     });
   })
 

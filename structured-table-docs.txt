@@ -1,0 +1,41 @@
+Зависимости
+  http://jquery.org
+  jQuery
+
+  http://danvk.org/dragtable/
+  dragtable
+
+  mindmup-editabletable.js - кастомный скрипт, не выделяет первую колонку и первую строку
+
+  http://dobtco.github.io/jquery-resizable-columns/
+  jquery.resizableColumns
+
+  http://ludo.cubicphuse.nl/jquery-treetable
+  jquery.treetable
+
+
+
+Rows - это не то модель, не то ViewModel
+Rows - функция, а доступ к элементам через айди. Добавлять и убирать элементы из него - только через методы, чтобы они дернули нашу таблицу.
+Rows(1) -> some row, Rows(1, 'id') -> 1, 
+Rows(1, 'name, 'foo') -> Returns false if such name isnt allowed. If all is OK will notify observers with id, attribute and new value
+Rows.appendChild(1) -> appends an empty child to the first row, automatically creates new id and notify observers.
+Rows.appendChild() -> appends an empty child to the root
+Rows.appendChild(null, {name: "xxx", age: 33}) -> appends new row to the root with name and age fields
+
+structured table и все, кто захочет подписаться на изменения Rows, слушают такие события:
+
+    $(document).on('rowChange', function(e, [id, attr, value]){})
+    $(document).on('childAppend', function(e, id){})
+    $(document).on('rowRemove', function(e, id){})
+Итак
+наша jquery.structuredTable вешается на таблицу, в параметрах следует указать Rows, с которым таблица будет связываться. 
+В дальнейшем таблица будет слушать изменения Rows, и пользоваться его сеттерами
+  $('table').structuredTable(dataScheme, rows);
+dataScheme - массив объектов вида 
+[
+  {field: "id", column: ""}, 
+  {field: "name", column: "Task name", expandable: true},
+  ... 
+]
+ expandable: true - для колонки в которой могут раскрываться строки

@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles/my_style.css">
-        <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="scripts/gant_char.js"></script>
-    </head>
-    <body>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/my_style.css">
+    <link rel="stylesheet" href="styles/jquery.treetable.css">
+    <link rel="stylesheet" href="styles/jquery.treetable.theme.default.css">
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="scripts/jquery.resizableColumns.min.js"></script>
+    <link rel="stylesheet" href="styles/jquery.resizableColumns.css">
+
+    <!-- customized script, disabled input on very first cells of rows -->
+    <script type="text/javascript" src="scripts/mindmup-editabletable.js"></script>
+
+    <script type="text/javascript" src="scripts/dragtable.js"></script>
+
+    <script type="text/javascript" src="scripts/jquery.treetable.js"></script>
+
+    <script type="text/javascript" src="scripts/jquery.structuredTable.js"></script>
+    <link rel="stylesheet" href="styles/task-table.css" />
+    <script type="text/javascript" src="utilities/date-interval.js"></script>
+    <script type="text/javascript" src="utilities/day-info.js"></script>
+    <script type="text/javascript" src="utilities/work-interval.js"></script>
+    <script type="text/javascript" src="utilities/end-task.js"></script>
+
+    <script type="text/javascript" src="scripts/gant_char.js"></script>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col">
+        <table id="tasks">
+          
+        </table>
+      </div><!-- .col -->
+      <div class="col">
         <div class="gantChart">
-            <div class="gantChartArea"></div>    
+          <div class="gantChartArea"></div>    
         </div>
-	</body>
-    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>-->
-    <!--<script type="text/javascript" src="scripts\drag_resize_v1.1.js"></script>-->
+      </div>
+    </div><!-- .row -->
+
+  </body>
+  <!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>-->
+  <!--<script type="text/javascript" src="scripts\drag_resize_v1.1.js"></script>-->
 </html>

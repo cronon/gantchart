@@ -9,7 +9,7 @@
       obj.addEventListener('DOMMouseScroll',mouseWheel,false);
       obj.addEventListener("mousewheel",mouseWheel,false);
   }
-  else obj.onmousewheel=mouseWheel;
+  else obj.onmousewheel = mouseWheel;
 
   function mouseWheel(e)
   {
@@ -23,139 +23,16 @@
 
         if (e.wheelDelta < 0 || e.detail < 0){
           scale += 1;
-          if( scale > 9) scale = 0;
+          if( scale > 9) scale = 9;
         } else {
           scale -= 1;
-          if( scale < 0) scale = 9;
+          if( scale < 0) scale = 0;
         }
 
         showScale(scale,chartStartDateF,chartEndDateF);
         return false;
       }
     }
-  }
-
-
-  var DateInterval = function(begin, end){
-    return {
-      'begin': new Date(begin),
-      'end': new Date(end),
-      include: function(date){
-        return this.begin < date && date < this.end;
-      },
-      includeInterval: function(interval){
-        return this.begin <= interval.begin && interval.end <= this.end;
-      }
-    }
-  }
-  //праздники
-  var getDayInfo = function(date, needInfoByNextDay) {
-    var MS_IN_HOUR = 3600 * 1000;
-
-    function getHolidays (date) {
-      var year = date.getFullYear();
-      result = [];
-      // 1, 2, 3, 4, 5, 6 и 8 января – Новогодние каникулы;
-      // 7 января – Рождество Христово;
-      for (var i = 1; i < 8; i++){
-        result.push(new Date(year, 0, i));
-      }
-
-      // 23 февраля – День защитника Отечества;
-      result.push(new Date(year, 1, 23));
-
-      // 8 марта – Международный женский день;
-      result.push(new Date(year, 2, 8));
-
-      // 1 мая – Праздник Весны и Труда;
-      result.push(new Date(year, 4, 1));
-
-      // 9 мая – День Победы;
-      result.push(new Date(year, 4, 9));
-
-      // 12 июня – День России;
-      result.push(new Date(year, 5, 12));
-
-      // 4 ноября – День народного единства
-      result.push(new Date(year, 10, 4));
-      return result;
-    }
-
-    /*
-     * Сравнение дат на равенство до дня -
-     * по году, месяцу и дню.
-     */
-    function sameDay(date1, date2) {
-      var d1 = [date1.getFullYear(), date1.getMonth(),
-        date1.getDate()];
-      var d2 = [date2.getFullYear(), date2.getMonth(),
-        date2.getDate()];
-
-      return (d1[0] == d2[0]) && (d1[1] == d2[1]) && (d1[2] == d2[2]);
-    }
-
-    var dayDate = new Date(date.getFullYear(), date.getMonth(),
-      date.getDate());
-    var dayInMillisec = dayDate.getTime();
-
-    var HOLIDAY_DAY = {
-      type: 'holiday_day',
-      schedule: [ 
-        DateInterval(NaN, NaN), 
-        DateInterval(NaN, NaN)
-      ]
-    }
-
-    var WORK_DAY = {
-      type: 'work_day',
-      schedule: [ 
-        DateInterval(dayInMillisec + 9 * MS_IN_HOUR, dayInMillisec + 13 * MS_IN_HOUR), 
-        DateInterval(dayInMillisec + 14 * MS_IN_HOUR, dayInMillisec + 18 * MS_IN_HOUR)
-      ]
-    }
-
-    var SHORTENED_DAY = {
-      type: 'before_holiday',
-      schedule: [ 
-        DateInterval(dayInMillisec + 9 * MS_IN_HOUR, dayInMillisec + 13 * MS_IN_HOUR), 
-        DateInterval(dayInMillisec + 14 * MS_IN_HOUR, dayInMillisec + 17 * MS_IN_HOUR)
-      ]
-    }
-
-    var dayIndex = date.getDay();
-    // проверка на субботу и воскресенье
-    if (dayIndex === 0 || dayIndex === 6){
-      return HOLIDAY_DAY;
-    }
-
-    var dayInfo = WORK_DAY;
-
-    // детерминированные праздники
-    getHolidays(date).every(function(elm, index, arr){
-      if(sameDay(elm, date)){
-        dayInfo = HOLIDAY_DAY;
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    needInfoByNextDay = needInfoByNextDay===undefined ? true : false;
-    // условие для рекурсии
-    if (needInfoByNextDay && dayInfo != HOLIDAY_DAY){
-      var nextDay = new Date(date.getTime() + 24 * MS_IN_HOUR);
-      // предотвращаем вечную рекурсиию
-      var nextDayInfo = getDayInfo(nextDay, false);
-      if (nextDayInfo.type === "holiday_day"){
-        dayInfo = SHORTENED_DAY;
-      }
-    }
-
-    if (dayInfo.schedule[0].end <= date && date < dayInfo.schedule[1].start){
-      dayInfo.type = "holiday_day";
-    }
-
-    return dayInfo;
   }
 
   var scale = 0;
@@ -167,23 +44,27 @@
   //список задач
   var activities = [
     {
-      startDate:"Jan 01, 2013 03:50:00",
-      endDate:"Jan 01, 2013 07:00:00"
+      startDate:"Jan 15, 2013 03:50:00",
+      duration: 19 * MS_IN_HOUR / 60,
+      endDate: getEndTask(new Date("Jan 15, 2013 03:50:00"), 19 * MS_IN_HOUR / 60).toString()
     },
 
     {
-      startDate:"Jan 02, 2013 00:00:00",
-      endDate:"Jan 03, 2013 00:07:00"
+      startDate:"Jan 22, 2013 00:00:00",
+      duration: MS_IN_HOUR * 4, 
+      endDate: getEndTask(new Date("Jan 22, 2013 00:00:00"), MS_IN_HOUR * 4).toString()
     },
 
     {
       startDate:"Feb 01, 2013",
-      endDate:"Feb 28, 2013"
+      duration: MS_IN_DAY * 5,
+      endDate: getEndTask(new Date("Feb 01, 2013"), MS_IN_DAY * 5).toString()
     },
 
     {
       startDate:"Jan 04, 2013",
-      endDate:"Apr 3, 2013"
+      duration: MS_IN_DAY * 90,
+      endDate: getEndTask(new Date("Jan 04, 2013"), MS_IN_DAY * 90).toString() 
     }
   ];
 
@@ -219,7 +100,7 @@
 
   Date.prototype.getDaysInYear = function(){
       var y = this.getFullYear();
-      return (y % 4 == 0 && y % 100 != 0 || y % 400 == 0)?366:365;
+      return (y % 4 == 0 && y % 100 != 0 || y % 400 == 0) ? 366 : 365;
   };
 
   Date.prototype.getDaysInMonth = function(){
@@ -286,7 +167,7 @@
 
   function mostPrevNextPeriod(myDate, dir, milliSecPeriod){
     var periodDate=new Date("Jan 01, "+myDate.getFullYear()); //пока здесь хранится начало года
-    var k=(myDate.getTime()-periodDate.getTime())/milliSecPeriod;
+    var k=(myDate.getTime()-periodDate.getTime())/milliSecPeriod; //count of periods
 
     if (k - Math.floor(k) == 0 && (dir=="prev" || dir=="next")) {
       periodDate.setTime(myDate.getTime());
@@ -340,6 +221,9 @@
       unitMilliSec: 60*60*1000,
       mainUnitLength: 24, //ширина в px
       unitLength: mostUnitLength,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         return dft.getMinutes();
       },
@@ -357,6 +241,9 @@
       mainUnitMilliSec: 2*60*60*1000,
       unitMilliSec: 24*60*60*1000,
       mainUnitLength: 20,
+      getUnitsCount: function(date){
+        return 12;
+      },
       getMainUnit: function(dft){
         return dft.getHours();
       },
@@ -372,7 +259,11 @@
       // день по 6 часов
       mainUnit: "6H", unit: "D",
       mainUnitMilliSec: 6*60*60*1000,
-      unitMilliSec:24*60*60*1000, mainUnitLength:20,
+      unitMilliSec:24*60*60*1000, 
+      mainUnitLength:20,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         return dft.getHours();
       },
@@ -390,6 +281,9 @@
       mainUnitMilliSec: 24*60*60*1000, //один день
       unitMilliSec:7*24*60*60*1000, //неделя
       mainUnitLength:20,
+      getUnitsCount: function(date){
+        return 7;
+      },
       getMainUnit: function(dft){
         return daysOfWeek[dft.getDay()].charAt(0);
       },
@@ -408,6 +302,15 @@
       mainUnitMilliSec: 3*24*60*60*1000,
       unitMilliSec: 30.4375*24*60*60*1000,
       mainUnitLength: 25,
+      getUnitsCount: function(date){
+        var result = 10;
+        switch(date.getMonth()){
+          case 0: result = 11; break;
+          case 1: result = 9; break;
+          case 2: result = 10; break;
+        }
+        return result;
+      },
       getMainUnit: function(dft){
         return dft.getDate();
       },
@@ -424,6 +327,9 @@
       mainUnitMilliSec: 7*24*60*60*1000,
       unitMilliSec: 30.4375*24*60*60*1000,
       mainUnitLength:30,
+      getUnitsCount: function(date){
+        return Math.floor(date.getDaysInMonth() / 7);
+      },      
       getMainUnit: function(dft){
         return dft.getDate();
       },
@@ -441,6 +347,9 @@
       mainUnitMilliSec: 30.4375*24*60*60*1000,
       unitMilliSec: 3*30.4375*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 3;
+      },
       getMainUnit: function(dft){
         return months[dft.getMonth()].substr(0,3);
       },
@@ -468,6 +377,9 @@
       mainUnitMilliSec: 30.4375*24*60*60*1000,
       unitMilliSec: 6*30.4375*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 6;
+      },
       getMainUnit: function(dft){
         return months[dft.getMonth()].charAt(0);
       },
@@ -490,6 +402,9 @@
       mainUnitMilliSec: 3*30.4375*24*60*60*1000,
       unitMilliSec: 365.25*24*60*60*1000,
       mainUnitLength: 24,
+      getUnitsCount: function(date){
+        return 4;
+      },
       getMainUnit: function(dft){
         var q;
         q = dft.getMonth();
@@ -514,6 +429,9 @@
       mainUnitMilliSec: 6*30.4375*24*60*60*1000,
       unitMilliSec: 365.25*24*60*60*1000,
       mainUnitLength: 35,
+      getUnitsCount: function(date){
+        return 2;
+      },
       getMainUnit: function(dft){
         var q;
         q=dft.getMonth();
@@ -547,7 +465,9 @@
     } else {
       item.mainUnitPrevNextPeriod = mostPrevNextPeriod;
     }
+
   });
+
 
   function showScale(scale, chartStartDate, chartEndDate){
 
@@ -578,66 +498,74 @@
     console.log("scale = ",scale);
 
     var widthUnitContent;
-    var setka = "<table class='unit'><tr>";
+    var units = "<tr class='unit'>";
     if (cSDU > cSDMU) {
       tDate = scales[scale].unitPrevNextPeriod(cSDU, "prev+",
        scales[scale].unitMilliSec);
       widthUnitContent = Math.round((cSDU.getTime()-cSDMU.getTime()) /
         scales[scale].unitMilliSec*scales[scale].unitLength(tDate));
-      setka += "<td class='first' style='background:yellow; min-width:" +
+      units += "<td class='first' style='background:yellow; min-width:" +
       widthUnitContent + "px; max-width:" + widthUnitContent + "px'></td>";
     }
     tDate.setTime(cSDU.getTime());
     widthUnitContent = scales[scale].unitLength(tDate);
 
     while (tDate <= cEDU) {
-      setka += "<td>" + scales[scale].getUnit(tDate) + "</td>";
-      tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
+      units += "<td colspan='"+scales[scale].getUnitsCount(tDate)+"'>" + scales[scale].getUnit(tDate) + "</td>";
+      //tDate.setTime(tDate.getTime() + scales[scale].unitMilliSec);
+      tDate = scales[scale].unitPrevNextPeriod(tDate, "next+",
+      scales [scale].unitMilliSec);
+
     }
-    setka += "</tr></table>";
-    $(".gantChartArea").html(setka);
-    $(".unit td").css("min-width", widthUnitContent);
-    $(".unit td").css("max-width", widthUnitContent);
+    units += "</tr>";
 
     // нижние деления
-    setka = "<table class='mainUnit'><tr>";
+    mainUnits = "<tr class='mainUnit'>";
     if (cSDMU > cSDU) {
       k = (cSDMU.getTime()-cSDU.getTime())/scales[scale].mainUnitMilliSec;
       widthUnitContent = Math.round((cSDMU.getTime()-cSDU.getTime()) /
         scales[scale].mainUnitMilliSec*scales[scale].mainUnitLength+k-1); //k-1 - это для учёта кол-ва ненарисованных границ, но почему-то для недели не работает -небольшой сдвиг там есть (
-      setka += "<td class='first' style='background:yellow; min-width:" +
+      mainUnits += "<td class='first' style='background:yellow; min-width:" +
         widthUnitContent + "px; max-width:" + widthUnitContent + "px; width:" +
         widthUnitContent + "px; height:21px'></td>";
     }
     tDate.setTime(cSDMU.getTime());
 
-    var columns = "<table class='columns'><tr>";
+    var columns = "<tr class='columns'>";
     while (tDate <= cEDMU) {
       var dayInfo = getDayInfo(tDate);
       var mainUnitInterval = DateInterval(tDate.getTime(), tDate.getTime() + scales[scale].mainUnitMilliSec);
-      if(dayInfo.schedule[0].includeInterval(mainUnitInterval) || 
+      
+      if( // маин юнит полностью в куске расписания или один из концов расписания в майн-юните
+        dayInfo.schedule[0].includeInterval(mainUnitInterval) || 
         dayInfo.schedule[1].includeInterval(mainUnitInterval) ||
-        mainUnitInterval.includeInterval(dayInfo.schedule[0]) ||
-        mainUnitInterval.includeInterval(dayInfo.schedule[1]) ){
+        mainUnitInterval.include(dayInfo.schedule[0].start) ||
+        mainUnitInterval.include(dayInfo.schedule[0].end) ||
+        mainUnitInterval.include(dayInfo.schedule[1].start) ||
+        mainUnitInterval.include(dayInfo.schedule[1].end)
+        ){
         klass = 'work-time';
       } else {
         klass = 'free-time';
       }
-      setka += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
+      mainUnits += "<td>" + scales[scale].getMainUnit(tDate) + "</td>";
 
       if (scale < 4){
         columns += "<td class=\""+klass+"\"></td>";
       }
-      tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
+
+      // tDate.setTime(tDate.getTime() + scales[scale].mainUnitMilliSec);
+      tDate = scales[scale].mainUnitPrevNextPeriod(tDate,"next+",
+        scales[scale].mainUnitMilliSec);
     }
 
-    setka += "</tr></table>";
-    $(".gantChartArea").append(setka);
-
+    mainUnits += "</tr>";
+    columns += "</tr></table>";
     // #slowcode#
+    $(".gantChartArea").html(units + mainUnits + columns);
+
     $(".mainUnit td:not(.first)").css("min-width",scales[scale].mainUnitLength);
     $(".mainUnit td:not(.first)").css("max-width",scales[scale].mainUnitLength);
-
 
     tDate.setTime(cSDMU.getTime());
 
@@ -645,8 +573,6 @@
     var widthColumnsContent = scales[scale].mainUnitLength;
 
     if (scale < 4){
-      columns += "</tr></table>";
-      $(".gantChartArea").append(columns);
       // Стили в строку и ко всему сразу для производительности
       var styleInStr = "<style> .columns td{ min-width:" + widthColumnsContent +
         "px;max-width:" + widthColumnsContent + "px}</style>";
@@ -657,7 +583,6 @@
         $('.mainUnit').height();
       $(".columns").css("height",heightColumns);
     }
-
 
     //рисуем задачи, хотя это нужно делать не здесь
     var begD = new Date();

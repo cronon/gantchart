@@ -1,7 +1,20 @@
+.row {
+  margin: 0 -2px;
+}
+.row::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+.col {
+  float: left;
+  margin: 0 2px;
+  width: calc(50% - 4px);
+}
+
 .gantChart {
-    width: 90%;
-    height:  90vh;
-    border: double grey;
+  height:  90vh;
+  border: double grey;
 	overflow-x:scroll;
 }
 .gantChartArea{
@@ -15,12 +28,12 @@
 	position:absolute;
 }
 
-table{
+.gantChart table{
 	border-collapse: collapse;
 	white-space: nowrap;
 }
 
-table td{
+.gantChart table td{
 	border: solid 1px black;
 	margin: 0px;
 	padding: 0px;
@@ -31,11 +44,11 @@ table td{
 	border-width: 0px 1px 0px 1px;
 }
 
-table.columns td {
+.gantChart table.columns td {
 	border: 1px solid white;
 }
 
-table.columns{
+.gantChart table.columns{
 	background-color: white;
 }
 
@@ -43,18 +56,24 @@ table.columns{
   text-align: center;
 }
 
-td.free-time{
-  background-color:gray;
+.gantChart td.free-time{
+  background-color:whitesmoke;
   position: relative;
 }
 
-table.mainUnit td{
+.gantChart table.mainUnit td{
   border: solid 1px black;
 }
 
-table td{
+.gantChart table td{
   border-top: solid 0px black;
 } 
 .mainUnit td:not(.first){
   text-align: center;
+}
+
+tr.unit > td, tr.mainUnit > td {
+  border: 1px solid black;
+  border-color: transparent black;
+  border-collapse: collapse;
 }
